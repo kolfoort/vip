@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="VIP Capital — short-term bridge loans for individuals and entrepreneurs.">
+<title>VIP Capital — Coming Soon</title>
+<style>
+:root{--navy:#030a12;--gold:#e1b85f;--gold2:#f3d58b;--white:#f7f4ed;--muted:#c8c6c0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--navy);color:var(--white);font-family:Arial,Helvetica,sans-serif}
+a{color:inherit;text-decoration:none}
+.site{position:relative;min-height:100vh;overflow:hidden;background:#030a12}
+.bg-photo{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0}
+.bg-overlay{position:fixed;inset:0;z-index:1;background:linear-gradient(90deg,rgba(3,10,18,.92) 0%,rgba(3,10,18,.74) 45%,rgba(3,10,18,.38) 100%),linear-gradient(180deg,rgba(3,10,18,.18),rgba(3,10,18,.50))}
+.wrap{position:relative;z-index:2;width:min(1400px,100%);min-height:100vh;margin:auto;padding:28px clamp(22px,5vw,76px) 38px;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:30px}
+.logo{width:190px;height:auto;display:block}
+nav{display:flex;gap:42px;margin-left:auto}
+nav a{font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:600}
+nav a:hover{color:var(--gold2)}
+.cta{margin-left:20px;border:1px solid var(--gold);padding:14px 25px;color:var(--gold2);font-size:11px;letter-spacing:.16em;text-transform:uppercase;background:rgba(3,10,18,.18)}
+.main{flex:1;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(360px,.72fr);align-items:center;gap:clamp(45px,7vw,110px);padding:58px 0 20px}
+.kicker{color:var(--gold2);letter-spacing:.34em;text-transform:uppercase;font-size:11px;margin-bottom:22px}
+h1{margin:0;font:400 clamp(68px,8vw,126px)/.88 Georgia,"Times New Roman",serif;letter-spacing:-.045em}
+h1 span{color:var(--gold2)}
+.rule{width:72px;height:2px;background:var(--gold);margin:34px 0 30px}
+.intro{max-width:650px;font:clamp(20px,2vw,29px)/1.38 Georgia,"Times New Roman",serif;color:#eeeae1}
+.features{display:grid;grid-template-columns:repeat(4,1fr);max-width:780px;margin-top:48px}
+.feature{padding:0 22px;border-right:1px solid rgba(255,255,255,.18)}
+.feature:first-child{padding-left:0}
+.feature:last-child{border-right:0}
+.feature b{display:block;color:var(--gold2);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+.feature small{display:block;margin-top:8px;color:var(--muted);font-size:12px;line-height:1.4}
+.form-card{background:rgba(3,10,18,.84);border:1px solid rgba(255,255,255,.25);padding:42px;backdrop-filter:blur(10px);box-shadow:0 20px 70px rgba(0,0,0,.35)}
+.form-card h2{margin:0 0 14px;font:400 clamp(34px,3.3vw,52px)/1.05 Georgia,"Times New Roman",serif}
+.form-card p{color:var(--muted);line-height:1.5;margin:0 0 28px}
+label{display:block;margin:0 0 7px;color:#ddd9d0;font-size:10px;letter-spacing:.13em;text-transform:uppercase}
+input,textarea,select{width:100%;padding:14px;margin-bottom:16px;background:rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.25);color:#fff;font:inherit;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--gold)}
+textarea{min-height:105px;resize:vertical}
+select option{background:#091827;color:#fff}
+button{width:100%;border:0;cursor:pointer;padding:16px;margin-top:2px;background:linear-gradient(90deg,#e4c06b,#f2d38b);color:#07101a;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+footer{border-top:1px solid rgba(255,255,255,.12);padding-top:22px;margin-top:25px;display:flex;justify-content:space-between;gap:20px;color:#aaa9a5;font-size:10px;letter-spacing:.13em;text-transform:uppercase}
+@media(max-width:900px){
+  .bg-photo{position:absolute}
+  .bg-overlay{position:absolute}
+  nav{gap:18px}
+  .cta{display:none}
+  .main{grid-template-columns:1fr;padding-top:45px}
+  .form-card{max-width:650px}
+}
+@media(max-width:620px){
+  .wrap{padding:20px 18px 28px}
+  .logo{width:150px}
+  nav{display:none}
+  .main{padding-top:50px;gap:45px}
+  h1{font-size:62px}
+  .intro{font-size:21px}
+  .features{grid-template-columns:repeat(2,1fr);gap:24px 0}
+  .feature:nth-child(2){border-right:0}
+  .feature:nth-child(3){padding-left:0;margin-top:24px}
+  .feature:nth-child(4){margin-top:24px}
+  .form-card{padding:27px 22px}
+  footer{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="site">
+  <img class="bg-photo" src="./images/amsterdam-bg.png" alt="" aria-hidden="true">
+  <div class="bg-overlay" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <header>
+      <a href="#" aria-label="VIP Capital home"><img class="logo" src="./images/vip-capital-logo.png" alt="VIP Capital"></a>
+      <nav aria-label="Main navigation">
+        <a href="#about">About</a>
+        <a href="#solutions">Solutions</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="cta" href="#contact">Private Enquiry</a>
+    </header>
+
+    <main class="main">
+      <section id="about">
+        <div class="kicker">Bridge Finance Solutions</div>
+        <h1>Coming <span>Soon</span></h1>
+        <div class="rule"></div>
+        <p class="intro">VIP Capital provides short-term bridge loans for individuals and entrepreneurs.</p>
+        <div class="features" id="solutions">
+          <div class="feature"><b>Discreet</b><small>Confidential handling from enquiry to completion.</small></div>
+          <div class="feature"><b>Fast</b><small>Clear decisions and efficient execution.</small></div>
+          <div class="feature"><b>Flexible</b><small>Bridge finance structured around your situation.</small></div>
+          <div class="feature"><b>Experienced</b><small>Professional, relationship-led approach.</small></div>
+        </div>
+      </section>
+
+      <section class="form-card" id="contact">
+        <h2>Private Enquiry</h2>
+        <p>Send us a confidential message and we will be in touch. All enquiries are treated in strict confidence.</p>
+        <form action="https://formsubmit.co/info@kolfoort.com" method="POST">
+          <input type="hidden" name="_subject" value="VIP Capital — New Private Enquiry">
+          <input type="hidden" name="_captcha" value="true">
+          <input type="hidden" name="Source" value="VIP Capital website">
+          <input type="hidden" name="_template" value="table">
+
+          <label for="name">Name</label>
+          <input id="name" name="Name" type="text" autocomplete="name" required>
+
+          <label for="email">Email Address</label>
+          <input id="email" name="Email" type="email" autocomplete="email" required>
+
+          <label for="phone">Phone Number</label>
+          <input id="phone" name="Phone" type="tel" autocomplete="tel">
+
+          <label for="type">Enquiry Type</label>
+          <select id="type" name="Enquiry Type">
+            <option>Bridge Finance</option>
+            <option>Private Enquiry</option>
+            <option>Other</option>
+          </select>
+
+          <label for="message">Message</label>
+          <textarea id="message" name="Message" required></textarea>
+
+          <button type="submit">Send Private Enquiry</button>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <span>Bridge Finance Solutions</span>
+      <span>For Individuals and Entrepreneurs</span>
+    </footer>
+  </div>
+</div>
+</body>
+</html>
