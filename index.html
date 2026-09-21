@@ -171,18 +171,50 @@ footer{border-top:1px solid rgba(255,255,255,.12);padding-top:22px;margin-top:25
   </div>
 </div>
 <script>
-  const params = new URLSearchParams(window.location.search);
+  const form = document.getElementById('enquiryForm');
+  const success = document.getElementById('enquirySuccess');
 
-  if (params.get('submitted') === 'true') {
-    const form = document.getElementById('enquiryForm');
-    const success = document.getElementById('enquirySuccess');
+  if (form && success) {
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault();
 
-    if (form && success) {
-      form.style.display = 'none';
-      success.style.display = 'block';
-    }
+      const button = form.querySelector('button[type="submit"]');
 
-    window.history.replaceState({}, document.title, window.location.pathname);
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'SENDING...';
+      }
+
+      try {
+        const response = await fetch(
+          'https://formsubmit.co/ajax/info@kolfoort.com',
+          {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+              'Accept': 'application/json'
+            }
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.ok && data.success !== false) {
+          form.style.display = 'none';
+          success.style.display = 'block';
+        } else {
+          throw new Error('Submission failed');
+        }
+
+      } catch (error) {
+        alert('Something went wrong. Please try again.');
+
+        if (button) {
+          button.disabled = false;
+          button.textContent = 'SEND ENQUIRY';
+        }
+      }
+    });
   }
 </script>
 </body>
