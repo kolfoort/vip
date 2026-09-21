@@ -65,6 +65,34 @@ footer{border-top:1px solid rgba(255,255,255,.12);padding-top:22px;margin-top:25
   .form-card{padding:27px 22px}
   footer{flex-direction:column}
 }
+.enquiry-success{
+  padding:50px 0;
+  text-align:center;
+}
+
+.enquiry-success .success-kicker{
+  color:#e1b85f;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:4px;
+  margin-bottom:22px;
+}
+
+.enquiry-success h3{
+  margin:0 0 16px;
+  font-family:Georgia,serif;
+  font-size:42px;
+  font-weight:400;
+  color:#f7f4ed;
+}
+
+.enquiry-success p{
+  max-width:520px;
+  margin:0 auto;
+  color:rgba(247,244,237,.72);
+  font-size:16px;
+  line-height:1.7;
+}
 </style>
 </head>
 <body>
@@ -100,11 +128,12 @@ footer{border-top:1px solid rgba(255,255,255,.12);padding-top:22px;margin-top:25
       <section class="form-card" id="contact">
         <h2>Private Enquiry</h2>
         <p>Send us a confidential message and we will be in touch. All enquiries are treated in strict confidence.</p>
-        <form action="https://formsubmit.co/info@kolfoort.com" method="POST">
+        <form id="enquiryForm" action="https://formsubmit.co/info@kolfoort.com" method="POST">
           <input type="hidden" name="_subject" value="VIP Capital — New Private Enquiry">
           <input type="hidden" name="_captcha" value="true">
           <input type="hidden" name="Source" value="VIP Capital website">
           <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_next" value="https://vipcapital.eu/?submitted=true">
 
           <label for="name">Name</label>
           <input id="name" name="Name" type="text" autocomplete="name" required>
@@ -127,6 +156,11 @@ footer{border-top:1px solid rgba(255,255,255,.12);padding-top:22px;margin-top:25
 
           <button type="submit">Send Private Enquiry</button>
         </form>
+        <div id="enquirySuccess" class="enquiry-success" style="display:none;">
+  <div class="success-kicker">ENQUIRY RECEIVED</div>
+  <h3>Thank you.</h3>
+  <p>Your private enquiry has been received and will be reviewed shortly.</p>
+</div>
       </section>
     </main>
 
@@ -136,5 +170,20 @@ footer{border-top:1px solid rgba(255,255,255,.12);padding-top:22px;margin-top:25
     </footer>
   </div>
 </div>
+<script>
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get('submitted') === 'true') {
+    const form = document.getElementById('enquiryForm');
+    const success = document.getElementById('enquirySuccess');
+
+    if (form && success) {
+      form.style.display = 'none';
+      success.style.display = 'block';
+    }
+
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+</script>
 </body>
 </html>
