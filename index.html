@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="VIP Capital — Alternative Investments & Private Capital. Digital Assets, Private Markets and Capital Solutions.">
+<title>VIP Capital — Alternative Investments & Private Capital</title>
+<style>
+:root{
+  --navy:#030a12;
+  --navy2:#07121e;
+  --gold:#d8b45c;
+  --gold2:#f2d58e;
+  --white:#f7f4ed;
+  --muted:#c4c6c6;
+  --line:rgba(255,255,255,.17);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--navy);color:var(--white);font-family:Arial,Helvetica,sans-serif}
+a{color:inherit;text-decoration:none}
+.page{
+  min-height:100vh;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,rgba(3,10,18,.94) 0%,rgba(3,10,18,.82) 43%,rgba(3,10,18,.52) 100%),
+    url("./images/amsterdam-bg.jpg") center/cover fixed no-repeat;
+}
+.page:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(3,10,18,.20),rgba(3,10,18,.62));
+  pointer-events:none;
+}
+.wrap{position:relative;z-index:1;width:min(1280px,100%);margin:auto;padding:28px clamp(22px,5vw,70px) 42px}
+header{display:flex;align-items:center;gap:28px}
+.logo{width:175px;height:auto;display:block}
+nav{display:flex;gap:36px;margin-left:auto}
+nav a{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:#eee}
+nav a:hover{color:var(--gold2)}
+.nav-cta{border:1px solid var(--gold);padding:12px 20px;color:var(--gold2);font-size:10px;letter-spacing:.15em;text-transform:uppercase}
+.hero{
+  min-height:680px;
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(350px,.72fr);
+  gap:80px;
+  align-items:center;
+  padding:75px 0 55px;
+}
+.kicker{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold2);margin-bottom:22px}
+h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(54px,6.3vw,92px);line-height:.94;letter-spacing:-.04em}
+h1 span{color:var(--gold2)}
+.rule{width:68px;height:2px;background:var(--gold);margin:30px 0 25px}
+.lead{max-width:640px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(19px,2vw,27px);line-height:1.4;color:#eeeae1}
+.sublead{max-width:610px;color:#c8c8c2;line-height:1.65;font-size:14px}
+.hero-meta{display:flex;gap:0;margin-top:38px;max-width:690px}
+.meta{padding:0 22px;border-right:1px solid var(--line)}
+.meta:first-child{padding-left:0}
+.meta:last-child{border-right:0}
+.meta b{display:block;color:var(--gold2);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+.meta span{display:block;margin-top:8px;color:#c8c6c0;font-size:12px;line-height:1.4}
+.enquiry{
+  background:rgba(3,10,18,.86);
+  border:1px solid rgba(255,255,255,.22);
+  padding:34px;
+  backdrop-filter:blur(10px);
+  box-shadow:0 20px 65px rgba(0,0,0,.34);
+}
+.enquiry h2{margin:0 0 10px;font:400 40px/1.05 Georgia,"Times New Roman",serif}
+.enquiry p{margin:0 0 23px;color:var(--muted);font-size:13px;line-height:1.55}
+label{display:block;margin:0 0 6px;color:#ddd9d0;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+input,select,textarea{width:100%;padding:12px 13px;margin-bottom:13px;background:rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.22);color:#fff;font:inherit;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{min-height:92px;resize:vertical}
+select option{background:#091827;color:#fff}
+button{width:100%;border:0;padding:14px;background:linear-gradient(90deg,#e1ba62,#f0d48f);color:#07101a;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+section.band{padding:86px 0;border-top:1px solid var(--line)}
+.section-kicker{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold2);margin-bottom:13px}
+.section-title{margin:0;font:400 48px/1.05 Georgia,"Times New Roman",serif}
+.section-intro{max-width:720px;color:#c9c9c4;line-height:1.7;font-size:14px;margin-top:17px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px}
+.card{border:1px solid var(--line);background:rgba(3,10,18,.60);padding:28px;min-height:210px}
+.card .num{font-size:10px;letter-spacing:.18em;color:var(--gold2)}
+.card h3{margin:26px 0 10px;font:400 28px/1.1 Georgia,"Times New Roman",serif}
+.card p{margin:0;color:#bfc1bf;font-size:13px;line-height:1.65}
+.principles{display:grid;grid-template-columns:repeat(4,1fr);margin-top:36px}
+.principle{padding:0 20px;border-right:1px solid var(--line)}
+.principle:first-child{padding-left:0}
+.principle:last-child{border-right:0}
+.principle b{display:block;color:var(--gold2);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+.principle p{margin:9px 0 0;color:#bfc1bf;font-size:12px;line-height:1.55}
+footer{border-top:1px solid var(--line);padding-top:20px;margin-top:30px;display:flex;justify-content:space-between;color:#aaa9a5;font-size:9px;letter-spacing:.13em;text-transform:uppercase}
+@media(max-width:900px){
+  .page{background-attachment:scroll}
+  nav{gap:18px}.nav-cta{display:none}
+  .hero{grid-template-columns:1fr;gap:45px;padding-top:55px}
+  .cards{grid-template-columns:1fr}
+  .principles{grid-template-columns:repeat(2,1fr);gap:30px 0}
+  .principle:nth-child(2){border-right:0}
+}
+@media(max-width:620px){
+  .wrap{padding:20px 18px 28px}
+  .logo{width:145px} nav{display:none}
+  .hero{min-height:auto;padding-top:55px}
+  h1{font-size:56px}.enquiry{padding:25px 20px}
+  .hero-meta{flex-direction:column;gap:18px}
+  .meta{padding:0;border-right:0}
+  .principles{grid-template-columns:1fr}
+  .principle{padding:0;border-right:0}
+  footer{flex-direction:column;gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="wrap">
+
+<header>
+  <a href="#" aria-label="VIP Capital home"><img class="logo" src="./images/vip-capital-logo.png" alt="VIP Capital"></a>
+  <nav>
+    <a href="#about">About</a>
+    <a href="#investments">Investments</a>
+    <a href="#approach">Approach</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <a class="nav-cta" href="#contact">Private Enquiry</a>
+</header>
+
+<main>
+<section class="hero" id="about">
+  <div>
+    <div class="kicker">Alternative Investments &amp; Private Capital</div>
+    <h1>Capital.<br><span>Without the noise.</span></h1>
+    <div class="rule"></div>
+    <p class="lead">Access to selected investment opportunities across digital assets, private markets and bespoke capital solutions.</p>
+    <p class="sublead">VIP Capital is built around a simple principle: efficient access to opportunities, disciplined selection and discreet execution. Our focus is long-term relationships and carefully structured private-capital transactions.</p>
+
+    <div class="hero-meta">
+      <div class="meta"><b>20+ Years</b><span>Experience in international business and capital markets.</span></div>
+      <div class="meta"><b>Private</b><span>Discreet, relationship-led access.</span></div>
+      <div class="meta"><b>International</b><span>Amsterdam · Dubai · Zurich · Miami</span></div>
+    </div>
+  </div>
+
+  <aside class="enquiry" id="contact">
+    <h2>Private Enquiry</h2>
+    <p>Tell us what you are looking for or what you would like to discuss. Every enquiry is treated confidentially.</p>
+    <form action="https://formsubmit.co/info@kolfoort.com" method="POST">
+      <input type="hidden" name="_subject" value="VIP Capital — New Private Enquiry">
+      <input type="hidden" name="_captcha" value="true">
+      <input type="hidden" name="Source" value="VIP Capital website">
+      <input type="hidden" name="_template" value="table">
+
+      <label for="name">Name</label>
+      <input id="name" name="Name" type="text" autocomplete="name" required>
+
+      <label for="email">Email Address</label>
+      <input id="email" name="Email" type="email" autocomplete="email" required>
+
+      <label for="phone">Phone Number</label>
+      <input id="phone" name="Phone" type="tel" autocomplete="tel">
+
+      <label for="interest">Investment Interest</label>
+      <select id="interest" name="Investment Interest">
+        <option value="Digital Assets">Digital Assets</option>
+        <option value="Private Markets">Private Markets</option>
+        <option value="Capital Solutions">Capital Solutions</option>
+        <option value="Alternative Investments">Alternative Investments</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="message">Message</label>
+      <textarea id="message" name="Message" required></textarea>
+
+      <button type="submit">Send Private Enquiry</button>
+    </form>
+  </aside>
+</section>
+
+<section class="band" id="investments">
+  <div class="section-kicker">Selected Areas</div>
+  <h2 class="section-title">Investment opportunities, thoughtfully selected.</h2>
+  <p class="section-intro">VIP Capital focuses on private and alternative opportunities where structure, access and execution matter. Availability is selective and subject to due diligence, suitability and applicable law.</p>
+
+  <div class="cards">
+    <article class="card">
+      <div class="num">01 / DIGITAL ASSETS</div>
+      <h3>Digital Assets</h3>
+      <p>Exposure to selected digital-asset opportunities, structured around disciplined risk management, liquidity considerations and professional execution.</p>
+    </article>
+    <article class="card">
+      <div class="num">02 / PRIVATE MARKETS</div>
+      <h3>Private Markets</h3>
+      <p>Private-company, real-asset and specialist opportunities that are not typically found in traditional public markets.</p>
+    </article>
+    <article class="card">
+      <div class="num">03 / CAPITAL SOLUTIONS</div>
+      <h3>Capital Solutions</h3>
+      <p>Bespoke capital structures and private transactions designed around specific commercial situations and counterparties.</p>
+    </article>
+  </div>
+</section>
+
+<section class="band" id="approach">
+  <div class="section-kicker">Our Approach</div>
+  <h2 class="section-title">Impress by efficiency.</h2>
+  <p class="section-intro">We aim to keep the process clear, discreet and efficient — from initial conversation and opportunity review through structuring, due diligence and execution.</p>
+
+  <div class="principles">
+    <div class="principle"><b>Discreet</b><p>Confidential communication and relationship-led execution.</p></div>
+    <div class="principle"><b>Selective</b><p>Opportunities are reviewed before being presented to clients.</p></div>
+    <div class="principle"><b>Efficient</b><p>Clear communication and focused execution without unnecessary layers.</p></div>
+    <div class="principle"><b>International</b><p>Amsterdam, Dubai, Zurich, Miami and international counterparties.</p></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <span>VIP Capital</span>
+  <span>Alternative Investments &amp; Private Capital</span>
+  <span>Amsterdam · Dubai · Zurich · Miami</span>
+</footer>
+
+</div>
+</div>
+</body>
+</html>
