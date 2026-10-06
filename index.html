@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="VIP Capital — Impress by Efficiency. Clear, efficient routes for bridge financing, trade finance, SBLC solutions and structured transactions.">
+<title>VIP Capital — Impress by Efficiency</title>
+<link rel="icon" type="image/png" sizes="128x128" href="/vip-capital-favicon.png">
+<link rel="apple-touch-icon" href="/vip-capital-favicon.png">
+<meta property="og:site_name" content="VIP Capital">
+<meta property="og:title" content="VIP Capital — Impress by Efficiency">
+<meta property="og:description" content="Capital and trade solutions without unnecessary complexity. Bridge finance, trade finance, SBLC and structured transactions.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vipcapital.eu/">
+<meta property="og:image" content="https://vipcapital.eu/vip-capital-share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="VIP Capital — Impress by Efficiency">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VIP Capital — Impress by Efficiency">
+<meta name="twitter:description" content="Capital and trade solutions without unnecessary complexity. Amsterdam and Dubai.">
+<meta name="twitter:image" content="https://vipcapital.eu/vip-capital-share.png">
+<style>
+:root{
+  --navy:#030a12;
+  --navy2:#07121e;
+  --gold:#d8b45c;
+  --gold2:#f2d58e;
+  --white:#f7f4ed;
+  --muted:#c4c6c6;
+  --line:rgba(255,255,255,.17);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--navy);color:var(--white);font-family:Arial,Helvetica,sans-serif}
+a{color:inherit;text-decoration:none}
+.page{
+  min-height:100vh;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,rgba(3,10,18,.94) 0%,rgba(3,10,18,.82) 43%,rgba(3,10,18,.52) 100%),
+    none center/cover fixed no-repeat;
+}
+.page:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(3,10,18,.20),rgba(3,10,18,.62));
+  pointer-events:none;
+}
+.wrap{position:relative;z-index:1;width:min(1280px,100%);margin:auto;padding:28px clamp(22px,5vw,70px) 42px}
+header{display:flex;align-items:center;gap:28px}
+.logo{width:175px;height:auto;display:block}
+nav{display:flex;gap:36px;margin-left:auto}
+.menu-toggle{display:none}
+nav a{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:#eee}
+nav a:hover{color:var(--gold2)}
+.nav-cta{border:1px solid var(--gold);padding:12px 20px;color:var(--gold2);font-size:10px;letter-spacing:.15em;text-transform:uppercase}
+.hero{
+  min-height:680px;
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(350px,.72fr);
+  gap:80px;
+  align-items:center;
+  padding:75px 0 55px;
+}
+.kicker{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold2);margin-bottom:22px}
+h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(54px,6.3vw,92px);line-height:.94;letter-spacing:-.04em}
+h1 span{color:var(--gold2)}
+.rule{width:68px;height:2px;background:var(--gold);margin:30px 0 25px}
+.lead{max-width:640px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(19px,2vw,27px);line-height:1.4;color:#eeeae1}
+.sublead{max-width:610px;color:#c8c8c2;line-height:1.65;font-size:14px}.slogan{margin-top:18px;color:var(--gold2);font:italic 19px Georgia,"Times New Roman",serif}
+.hero-meta{display:flex;gap:0;margin-top:38px;max-width:690px}
+.meta{padding:0 22px;border-right:1px solid var(--line)}
+.meta:first-child{padding-left:0}
+.meta:last-child{border-right:0}
+.meta b{display:block;color:var(--gold2);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+.meta span{display:block;margin-top:8px;color:#c8c6c0;font-size:12px;line-height:1.4}
+.enquiry{
+  background:rgba(3,10,18,.86);
+  border:1px solid rgba(255,255,255,.22);
+  padding:34px;
+  backdrop-filter:blur(10px);
+  box-shadow:0 20px 65px rgba(0,0,0,.34);
+}
+.enquiry h2{margin:0 0 10px;font:400 40px/1.05 Georgia,"Times New Roman",serif}
+.enquiry p{margin:0 0 23px;color:var(--muted);font-size:13px;line-height:1.55}
+label{display:block;margin:0 0 6px;color:#ddd9d0;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+input,select,textarea{width:100%;padding:12px 13px;margin-bottom:13px;background:rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.22);color:#fff;font:inherit;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{min-height:92px;resize:vertical}
+select option{background:#091827;color:#fff}
+button{width:100%;border:0;padding:14px;background:linear-gradient(90deg,#e1ba62,#f0d48f);color:#07101a;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+section.band{padding:86px 0;border-top:1px solid var(--line)}
+.section-kicker{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold2);margin-bottom:13px}
+.section-title{margin:0;font:400 48px/1.05 Georgia,"Times New Roman",serif}
+.section-intro{max-width:720px;color:#c9c9c4;line-height:1.7;font-size:14px;margin-top:17px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px}
+.card{border:1px solid var(--line);background:rgba(3,10,18,.60);padding:28px;min-height:210px}
+.card .num{font-size:10px;letter-spacing:.18em;color:var(--gold2)}
+.card h3{margin:26px 0 10px;font:400 28px/1.1 Georgia,"Times New Roman",serif}
+.card p{margin:0;color:#bfc1bf;font-size:13px;line-height:1.65}
+.principles{display:grid;grid-template-columns:repeat(4,1fr);margin-top:36px}
+.principle{padding:0 20px;border-right:1px solid var(--line)}
+.principle:first-child{padding-left:0}
+.principle:last-child{border-right:0}
+.principle b{display:block;color:var(--gold2);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+.principle p{margin:9px 0 0;color:#bfc1bf;font-size:12px;line-height:1.55}
+footer{border-top:1px solid var(--line);padding-top:20px;margin-top:30px;display:flex;justify-content:space-between;color:#aaa9a5;font-size:9px;letter-spacing:.13em;text-transform:uppercase}
+@media(max-width:900px){
+  .page{background-attachment:scroll}
+  nav{gap:18px}.nav-cta{display:none}
+  .hero{grid-template-columns:1fr;gap:45px;padding-top:55px}
+  .cards{grid-template-columns:1fr}
+  .principles{grid-template-columns:repeat(2,1fr);gap:30px 0}
+  .principle:nth-child(2){border-right:0}
+}
+@media(max-width:620px){
+  .wrap{padding:20px 18px 28px}
+  header{position:relative;justify-content:space-between;gap:14px}
+  .logo{width:145px}
+  .menu-toggle{display:inline-flex;align-items:center;justify-content:center;width:44px;height:42px;padding:9px;border:1px solid var(--gold);background:transparent;color:var(--gold2);cursor:pointer}
+  .menu-toggle span{display:block;position:relative;width:21px;height:2px;background:currentColor;transition:background .2s}
+  .menu-toggle span:before,.menu-toggle span:after{content:"";position:absolute;left:0;width:21px;height:2px;background:currentColor;transition:transform .2s,top .2s}
+  .menu-toggle span:before{top:-7px}.menu-toggle span:after{top:7px}
+  .menu-toggle[aria-expanded="true"] span{background:transparent}
+  .menu-toggle[aria-expanded="true"] span:before{top:0;transform:rotate(45deg)}
+  .menu-toggle[aria-expanded="true"] span:after{top:0;transform:rotate(-45deg)}
+  nav{display:none;position:absolute;top:calc(100% + 14px);left:0;right:0;z-index:50;margin:0;padding:8px 18px;flex-direction:column;gap:0;background:rgba(7,18,30,.98);border:1px solid rgba(216,180,92,.5);box-shadow:0 16px 40px rgba(0,0,0,.42)}
+  nav.open{display:flex}
+  nav a{width:100%;padding:15px 0;border-bottom:1px solid var(--line);font-size:11px}
+  nav a:last-child{border-bottom:0}
+  .hero{min-height:auto;padding-top:55px}
+  h1{font-size:56px}.enquiry{padding:25px 20px}
+  .hero-meta{flex-direction:column;gap:18px}
+  .meta{padding:0;border-right:0}
+  .principles{grid-template-columns:1fr}
+  .principle{padding:0;border-right:0}
+  footer{flex-direction:column;gap:10px}
+}
+</style>
+
+<style>
+/* Founder-led VIP Capital section */
+.founder{
+  display:grid;
+  grid-template-columns:minmax(0, .95fr) minmax(0, 1.05fr);
+  gap:0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  background:#050c14;
+}
+.founder-photo{
+  min-height:650px;
+  background:url("./jp-kolfoort-founder.png") center/cover no-repeat;
+  filter:saturate(.88);
+}
+.founder-copy{
+  padding:82px clamp(34px,6vw,90px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.founder-copy .section-kicker{margin-bottom:18px}
+.founder-copy h2{
+  margin:0;
+  font:400 clamp(48px,5.2vw,78px)/.98 Georgia,"Times New Roman",serif;
+  letter-spacing:-.035em;
+}
+.founder-copy h2 span{color:var(--gold2)}
+.founder-copy .founder-rule{
+  width:58px;height:2px;background:var(--gold);margin:28px 0 24px;
+}
+.founder-copy p{
+  max-width:650px;
+  color:#c9c9c4;
+  line-height:1.72;
+  font-size:15px;
+  margin:0 0 18px;
+}
+.founder-name{
+  margin-top:18px;
+  color:var(--white);
+  font:400 27px/1.1 Georgia,"Times New Roman",serif;
+}
+.founder-role{
+  margin-top:7px;
+  color:var(--gold2);
+  font-size:10px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+}
+.founder-signature{
+  margin-top:34px;
+  color:#9fa3a5;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+@media(max-width:900px){
+  .founder{grid-template-columns:1fr}
+  .founder-photo{min-height:560px}
+  .founder-copy{padding:60px 7%}
+}
+</style>
+
+
+<style>
+.vip-offices{
+  border-top:1px solid rgba(214,177,92,.28);
+  background:#06101a;
+  padding:80px 6vw 86px;
+}
+.vip-offices-head{
+  max-width:760px;
+  margin-bottom:42px;
+}
+.vip-offices-kicker{
+  color:#d6b15c;
+  font-size:11px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  margin-bottom:18px;
+}
+.vip-offices h2{
+  margin:0;
+  color:#f6f2e9;
+  font:400 clamp(46px,5vw,76px)/.98 Georgia,"Times New Roman",serif;
+}
+.vip-offices h2 span{color:#d6b15c}
+.vip-offices-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+.vip-office{
+  border:1px solid rgba(214,177,92,.45);
+  padding:34px;
+  min-height:260px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  background:linear-gradient(145deg,#0a1722,#050b12);
+}
+.vip-office-label{
+  color:#d6b15c;
+  font-size:11px;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+}
+.vip-office h3{
+  margin:14px 0 18px;
+  color:#f6f2e9;
+  font:400 34px/1.05 Georgia,"Times New Roman",serif;
+}
+.vip-office address{
+  font-style:normal;
+  color:#bfc5c8;
+  line-height:1.7;
+  font-size:15px;
+}
+.vip-office a{
+  color:#d6b15c;
+  text-decoration:none;
+}
+.vip-office .office-contact{
+  margin-top:18px;
+  display:grid;
+  gap:10px;
+}
+.office-contact-row{display:flex;align-items:center;gap:10px;min-width:0;color:#d6b15c;font-size:14px}
+.office-contact-row a{color:inherit}
+.office-contact-row .contact-icon{width:18px;height:18px;flex:0 0 18px}
+.office-contact-row .whatsapp-icon{width:20px;height:20px;flex:0 0 20px;color:#25D366}
+.office-contact-row .whatsapp-link{display:inline-flex;align-items:center;margin-left:2px}
+@media(max-width:800px){
+  .vip-offices-grid{grid-template-columns:1fr}
+  .vip-office{min-height:230px}
+}
+</style>
+
+</head>
+<body>
+<div class="page">
+<div class="wrap">
+
+<header>
+  <a href="#about" aria-label="VIP Capital home"><img class="logo" src="./VIP-Capital-logo-transparent.png" alt="VIP Capital"></a>
+  <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav"><span></span></button>
+  <nav id="primary-nav">
+    <a href="#solutions">Solutions</a>
+    <a href="#approach">Our Approach</a>
+    <a href="#about">About</a>
+    <a href="#offices">Offices</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <a class="nav-cta" href="#contact">Private Enquiry</a>
+</header>
+
+<main>
+<section class="hero" id="about">
+  <div>
+    <div class="kicker">Our Core Value</div>
+    <h1>Impress by<br><span>Efficiency.</span></h1>
+    <div class="rule"></div>
+    <p class="lead">Capital and trade solutions. Without unnecessary complexity.</p>
+    <p class="sublead">Financing processes can be slow and fragmented. We focus on the essentials: clear requirements, direct coordination and efficient execution. We explore bridge financing, trade finance, SBLC solutions, regulated structured finance and digital-asset trading on a case-by-case basis, with all required due diligence and controls.</p>
+
+    <div class="hero-meta">
+      <div class="meta"><b>Asset-backed</b><span>Explore liquidity against eligible assets and security.</span></div>
+      <div class="meta"><b>Trade-linked</b><span>Financing routes for transactions and supply chains.</span></div>
+      <div class="meta"><b>Cross-border</b><span>Amsterdam · Dubai</span></div>
+    </div>
+  </div>
+
+  <aside class="enquiry" id="contact">
+    <h2>Discuss a transaction</h2>
+    <p>Share a brief outline of your financing or trade requirement. Enquiries are handled discreetly and reviewed case by case.</p>
+    <form action="https://formsubmit.co/info@vipcapital.eu" method="POST">
+      <input type="hidden" name="_subject" value="VIP Capital — New Enquiry">
+      <input type="hidden" name="_captcha" value="true">
+      <input type="hidden" name="Source" value="VIP Capital website">
+      <input type="hidden" name="_template" value="table">
+
+      <label for="name">Name</label>
+      <input id="name" name="Name" type="text" autocomplete="name" required>
+
+      <label for="email">Email Address</label>
+      <input id="email" name="Email" type="email" autocomplete="email" required>
+
+      <label for="phone">Phone Number</label>
+      <input id="phone" name="Phone" type="tel" autocomplete="tel">
+
+      <label for="interest">Area of Interest</label>
+      <select id="interest" name="Area of Interest">
+        <option value="Bridge Financing">Bridge Financing</option>
+        <option value="Trade Finance">Trade Finance</option>
+        <option value="Receivables &amp; Working Capital Finance">Receivables &amp; Working Capital Finance</option>
+        <option value="SBLC Trading or Issuance">SBLC Trading or Issuance</option>
+        <option value="Regulated Structured Finance and Trade">Regulated Structured Finance &amp; Trade</option>
+        <option value="Digital Asset / Crypto Trading">Digital Asset / Crypto Trading</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="message">Brief Transaction Outline</label>
+      <textarea id="message" name="Message" required></textarea>
+
+      <button type="submit">Send a Private Enquiry</button>
+    </form>
+  </aside>
+</section>
+
+<section class="band" id="solutions">
+  <div class="section-kicker">What We Do</div>
+  <h2 class="section-title">Capital and trade solutions, built around the transaction.</h2>
+  <p class="section-intro">We connect financing needs with suitable structures, counterparties and execution pathways. Mandates are assessed individually, with clear communication about requirements, timing and next steps.</p>
+
+  <div class="cards">
+    <article class="card">
+      <div class="num">01 / BRIDGE FINANCING</div>
+      <h3>Bridge Financing</h3>
+      <p>For asset-rich, cash-constrained borrowers facing a time-sensitive liquidity gap. Potential routes depend on the asset, security, repayment plan and due diligence.</p>
+    </article>
+    <article class="card">
+      <div class="num">02 / TRADE FINANCE</div>
+      <h3>Trade Finance</h3>
+      <p>Financing support across the broader trade cycle, including commodity and cross-border transactions, working-capital needs and supply-chain requirements.</p>
+    </article>
+    <article class="card">
+      <div class="num">03 / SBLC</div>
+      <h3>SBLC Trading &amp; Issuance</h3>
+      <p>Support with standby letter of credit opportunities, including potential trading and issuance pathways, subject to issuer criteria, verification and acceptance.</p>
+    </article>
+    <article class="card">
+      <div class="num">04 / STRUCTURED FINANCE</div>
+      <h3>Regulated Structured Finance &amp; Trade</h3>
+      <p>Structured financing routes for complex trade situations, developed with appropriately regulated institutions and counterparties where required.</p>
+    </article>
+    <article class="card">
+      <div class="num">05 / DIGITAL ASSETS</div>
+      <h3>Crypto Trading</h3>
+      <p>Digital-asset trading opportunities explored with attention to counterparties, transaction controls, custody and applicable regulatory requirements.</p>
+    </article>
+    <article class="card">
+      <div class="num">06 / WORKING CAPITAL</div>
+      <h3>Receivables &amp; Working Capital Finance</h3>
+      <p>Potential funding against eligible invoices, receivables, inventory or purchase orders to help bridge cash-flow needs across a trade cycle.</p>
+    </article>
+  </div>
+</section>
+
+<section class="band" id="approach">
+  <div class="section-kicker">Our Approach</div>
+  <h2 class="section-title">Less friction. Clear next steps.</h2>
+  <p class="section-intro">We aim to make complex financing and trade requirements easier to navigate: identify the essentials early, coordinate directly with relevant counterparties, and keep each next step clear. Efficiency means removing unnecessary friction while maintaining proper diligence, risk controls and regulatory requirements.</p>
+
+  <div class="principles">
+    <div class="principle"><b>Focus</b><p>Establish the key requirement, transaction facts and desired timing.</p></div>
+    <div class="principle"><b>Coordinate</b><p>Work directly with relevant clients and counterparties.</p></div>
+    <div class="principle"><b>Simplify</b><p>Make requirements and responsibilities clear from the outset.</p></div>
+    <div class="principle"><b>Deliver</b><p>Move viable mandates forward with disciplined due diligence and controls.</p></div>
+  </div>
+  <p class="section-intro">All financing, instrument, structured-finance and digital-asset activity is subject to due diligence, risk assessment, counterparty acceptance and applicable laws and regulations. Any regulated activity is carried out by appropriately authorised parties where required. No financing, issuance, trade execution or investment return is guaranteed.</p>
+</section>
+</main>
+
+
+
+<section class="vip-offices" id="offices">
+  <div class="vip-offices-head">
+    <div class="vip-offices-kicker">Our Offices</div>
+    <h2>Amsterdam.<br><span>Dubai.</span></h2>
+  </div>
+  <div class="vip-offices-grid">
+    <article class="vip-office">
+      <div>
+        <div class="vip-office-label">Amsterdam Office</div>
+        <h3>Herengracht</h3>
+        <address>
+          Herengracht 208<br>
+          1016 BS Amsterdam<br>
+          The Netherlands
+        </address>
+      </div>
+      <div class="office-contact">
+        <div class="office-contact-row"><svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.1 5.18 2 2 0 0 1 5.08 3h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L9 10.7a16 16 0 0 0 4.3 4.3l1.24-1.25a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z"/></svg><a href="tel:+31852009082">+31 (0)85-200 9082</a><a class="whatsapp-link" href="https://wa.me/31852009082" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp +31 85 200 9082"><svg class="whatsapp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.6A8.5 8.5 0 1 1 20.5 11.5Z"/><path d="M8.2 7.7c.2-.5.5-.5.8-.5h.5c.2 0 .4.1.5.4l.8 1.8c.1.2.1.4-.1.6l-.6.7c-.2.2-.2.4 0 .6.5.9 1.3 1.6 2.2 2.1.2.1.4.1.6-.1l.8-.9c.2-.2.4-.2.6-.1l1.7.8c.3.1.4.3.4.5 0 .4-.2 1.2-.7 1.6-.5.5-1.2.7-1.8.6-1-.1-2.3-.7-3.8-1.9-1.7-1.4-2.8-3.1-3.1-4.2-.3-1.1.1-1.7.4-2Z"/></svg></a></div>
+        <div class="office-contact-row"><svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><a href="mailto:info@vipcapital.eu">info@vipcapital.eu</a></div>
+      </div>
+    </article>
+    <article class="vip-office">
+      <div>
+        <div class="vip-office-label">Dubai Office</div>
+        <h3>Marsa Dubai</h3>
+        <address>
+          Al Emreef Street, Marsa Dubai<br>
+          Dubai<br>
+          United Arab Emirates
+        </address>
+      </div>
+      <div class="office-contact">
+        <div class="office-contact-row"><svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.1 5.18 2 2 0 0 1 5.08 3h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L9 10.7a16 16 0 0 0 4.3 4.3l1.24-1.25a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z"/></svg><a href="tel:+971568167110">+971 56 816 7110</a><a class="whatsapp-link" href="https://wa.me/971568167110" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp +971 56 816 7110"><svg class="whatsapp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.6A8.5 8.5 0 1 1 20.5 11.5Z"/><path d="M8.2 7.7c.2-.5.5-.5.8-.5h.5c.2 0 .4.1.5.4l.8 1.8c.1.2.1.4-.1.6l-.6.7c-.2.2-.2.4 0 .6.5.9 1.3 1.6 2.2 2.1.2.1.4.1.6-.1l.8-.9c.2-.2.4-.2.6-.1l1.7.8c.3.1.4.3.4.5 0 .4-.2 1.2-.7 1.6-.5.5-1.2.7-1.8.6-1-.1-2.3-.7-3.8-1.9-1.7-1.4-2.8-3.1-3.1-4.2-.3-1.1.1-1.7.4-2Z"/></svg></a></div>
+        <div class="office-contact-row"><svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><a href="mailto:info@vipcapital.eu">info@vipcapital.eu</a></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<footer>
+  <span>© 2012–2026 VIP Capital. All rights reserved.</span>
+  <span>Impress by Efficiency.</span>
+  <a href="privacy-policy.html">Privacy Policy</a>
+</footer>
+
+</div>
+</div>
+<script>
+const menuButton=document.querySelector('.menu-toggle');
+const primaryNav=document.querySelector('#primary-nav');
+menuButton.addEventListener('click',()=>{
+  const isOpen=primaryNav.classList.toggle('open');
+  menuButton.setAttribute('aria-expanded',String(isOpen));
+  menuButton.setAttribute('aria-label',isOpen?'Close menu':'Open menu');
+});
+primaryNav.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{
+  primaryNav.classList.remove('open');
+  menuButton.setAttribute('aria-expanded','false');
+  menuButton.setAttribute('aria-label','Open menu');
+}));
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){
+    primaryNav.classList.remove('open');
+    menuButton.setAttribute('aria-expanded','false');
+    menuButton.setAttribute('aria-label','Open menu');
+  }
+});
+</script>
+</body>
+</html>
