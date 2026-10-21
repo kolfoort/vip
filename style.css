@@ -39,3 +39,5 @@
 .footer-bottom>span:first-child,.footer-bottom>span:first-child a{color:var(--gold)}
 
 input[type="hidden"]{display:none}.contact .form-note a{margin:0;font-size:inherit}
+
+.contact{gap:7%;align-items:start;padding:85px 0}.contact h2{font-size:46px;line-height:1.12;max-width:470px}.contact h2 em{font-style:normal}.contact form{padding:32px;background:#0c1927;border:1px solid #d8b45c44;gap:22px}.contact label{font-size:10px;letter-spacing:1px;color:#d8b45c}.contact input:not([type="hidden"]),.contact select,.contact textarea{margin-top:9px;padding:13px 14px;border:1px solid #ffffff29;background:#07131f;font-size:13px;color:#f7f4ed}.contact input:focus,.contact select:focus,.contact textarea:focus{outline:1px solid #d8b45c}.contact textarea{min-height:115px}.contact form .button{width:100%;justify-content:space-between}.contact .form-note{font-size:10px;line-height:1.6}@media(max-width:760px){.contact h2{font-size:36px}.contact form{padding:22px}.contact form{grid-template-columns:1fr}.contact label{grid-column:1/-1}}
