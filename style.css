@@ -49,3 +49,5 @@ input[type="hidden"]{display:none}.contact .form-note a{margin:0;font-size:inher
 header .client-login{background:var(--gold);color:#0b1420;border:1px solid var(--gold);font-weight:bold}header .client-login:hover{background:#edd08d;color:#0b1420;border-color:#edd08d}
 
 .city-row>div:not(.markets) h3{min-height:0;margin:18px 0 14px}
+
+.hero{min-height:640px}.hero-content{padding-bottom:55px}@media(min-width:1700px){.hero{min-height:740px}}@media(max-width:760px){.hero{min-height:620px}}
