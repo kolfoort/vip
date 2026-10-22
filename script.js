@@ -5,4 +5,4 @@ const menuToggle=document.querySelector('.menu-toggle');const mainNav=document.g
 
 const loginDialog=document.getElementById('client-login-dialog');document.querySelector('.client-login')?.addEventListener('click',()=>loginDialog.showModal());document.querySelector('.dialog-close')?.addEventListener('click',()=>loginDialog.close());
 
-document.querySelectorAll('.team-portraits .portrait').forEach(p=>p.addEventListener('click',()=>{const active=!p.classList.contains('active');document.querySelectorAll('.team-portraits .portrait').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-pressed','false')});p.classList.toggle('active',active);p.setAttribute('aria-pressed',String(active))}));
+document.querySelectorAll('.team-portraits .portrait').forEach(p=>{const toggle=()=>{const active=!p.classList.contains('active');document.querySelectorAll('.team-portraits .portrait').forEach(x=>x.classList.remove('active'));p.classList.toggle('active',active)};p.addEventListener('click',e=>{if(!e.target.closest('a'))toggle()});p.addEventListener('keydown',e=>{if(e.target===p&&(e.key==='Enter'||e.key===' ')){e.preventDefault();toggle()}})});
