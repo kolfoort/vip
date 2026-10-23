@@ -1,0 +1,4 @@
+Mozilla PDF.js / pdfjs-dist 6.4.299
+Legacy browser builds for compatibility. Apache-2.0.
+Source: https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-6.4.299.tgz
+Supporting assets: cmaps, standard_fonts, wasm.
