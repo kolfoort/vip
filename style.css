@@ -46,7 +46,7 @@ input[type="hidden"]{display:none}.contact .form-note a{margin:0;font-size:inher
 
 .client-login{background:transparent;color:var(--cream);cursor:pointer}.tabs button span{display:none!important}dialog{max-width:450px;width:90%;padding:38px;background:var(--panel);color:var(--cream);border:1px solid #d8b45c77}dialog::backdrop{background:#020812cc}dialog h2{font-size:35px;margin:20px 0}dialog p{font-size:14px;color:var(--muted);margin-top:15px}dialog a{color:var(--gold)}.dialog-close{position:absolute;top:10px;right:14px;background:none;border:0;color:var(--gold);font-size:25px;cursor:pointer}
 
-header .client-login{background:var(--gold);color:#0b1420;border:1px solid var(--gold);font-weight:bold}header .client-login:hover{background:#edd08d;color:#0b1420;border-color:#edd08d}
+header .client-login,header .client-portal{background:var(--gold);color:#0b1420;border:1px solid var(--gold);font-weight:bold}header .client-login:hover,header .client-portal:hover{background:#edd08d;color:#0b1420;border-color:#edd08d}
 
 .city-row>div:not(.markets) h3{min-height:0;margin:18px 0 14px}
 
