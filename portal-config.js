@@ -1,2 +1,2 @@
 // Public browser configuration; no secret keys.
-export const config={url:'https://lwhsrxxagevisfeihxcy.supabase.co',publishableKey:'sb_publishable_ytiMTE7anchaoGlFEQVBzg_qGbgwXci'};
+export const config={url:'https://lwhsrxxagevisfeihxcy.supabase.co',functionKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3aHNyeHhhZ2V2aXNmZWloeGN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0NDQ2MTIsImV4cCI6MjEwODAyMDYxMn0.eBQrl8GIyHqpl-5AfGOa0xsEwa_Mkcu4U1MT2k8HpdU',publishableKey:'sb_publishable_ytiMTE7anchaoGlFEQVBzg_qGbgwXci'};

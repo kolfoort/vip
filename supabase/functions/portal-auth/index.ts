@@ -1,0 +1,28 @@
+import {createClient} from 'npm:@supabase/supabase-js@2.102.0';
+import nodemailer from 'npm:nodemailer@7.0.11';
+const secret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const db=createClient(Deno.env.get('SUPABASE_URL')!,secret,{auth:{persistSession:false}});
+const hash=async(s:string)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))).map(x=>x.toString(16).padStart(2,'0')).join('');
+function template(title:string,description:string,label:string,url:string){return `<!doctype html><html lang="en"><body style="margin:0;background:#f3f6f9;font-family:Arial,Helvetica,sans-serif;color:#002040"><table role="presentation" width="100%"><tr><td align="center" style="padding:32px 16px"><table role="presentation" width="600" style="width:100%;max-width:600px;background:#fff;border:1px solid #dce3eb"><tr><td style="padding:28px 32px;border-bottom:3px solid #bd9a45"><img src="https://vipcapital.eu/portal-logo.png" width="180" alt="VIP Capital"></td></tr><tr><td style="padding:32px"><p style="color:#9b7929;letter-spacing:2px;font-size:11px">PRIVATE CLIENT PORTAL</p><h1 style="font:30px Georgia,serif">${title}</h1><p style="font-size:15px;line-height:1.7;color:#637387">${description}</p><p style="padding:20px 0"><a href="${url.replaceAll('&','&amp;').replaceAll('"','&quot;')}" style="display:inline-block;background:#002040;color:#fff;text-decoration:none;font-weight:bold;padding:16px 26px">${label}</a></p><p style="font-size:12px;line-height:1.7">This link is intended only for the registered recipient. For assistance, contact info@vipcapital.eu.</p></td></tr><tr><td style="background:#002040;color:#fff;padding:22px 32px;font-size:11px;line-height:1.8"><strong>VIP CAPITAL</strong><br>Oude Apeldoornseweg 45-067 · 7333 NR Apeldoorn · The Netherlands<br>info@vipcapital.eu · +31 (0)85-200 9082</td></tr></table></td></tr></table></body></html>`;}
+Deno.serve(async req=>{
+ const origin=req.headers.get('origin');const headers={'Access-Control-Allow-Origin':'https://vipcapital.eu','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin'};
+ const respond=(status:number,message:string)=>Response.json({message},{status,headers});
+ if(origin&&origin!=='https://vipcapital.eu')return respond(403,'Origin not allowed');if(req.method==='OPTIONS')return new Response(null,{status:204,headers});if(req.method!=='POST')return respond(405,'POST required');
+ let b;try{const s=await req.text();if(s.length>1500)return respond(413,'Request too large');b=JSON.parse(s)}catch{return respond(400,'Invalid request')}
+ const accepted=()=>respond(202,'If this email is eligible for a VIP Capital account, you will receive a secure link shortly.');
+ let email='',bootstrapId:string|null=null;let type:'invite'|'recovery'='recovery';
+ if(b.action==='bootstrap'){
+ if(typeof b.token!=='string'||!/^[0-9a-f]{64}$/.test(b.token))return respond(401,'Unauthorized');const r=await db.rpc('claim_portal_bootstrap',{p_hash:await hash(b.token)});if(r.error)return respond(500,'Invitation unavailable');if(!r.data?.length)return respond(200,'No pending invitation');bootstrapId=r.data[0].id;email=r.data[0].email;type='invite';
+ }else if(b.action==='recovery'){
+ if(typeof b.email!=='string'||b.email.length>254||!/^\S+@[^\s@]+\.[^\s@]+$/.test(b.email))return accepted();email=b.email.trim().toLowerCase();const ip=req.headers.get('x-forwarded-for')?.split(',')[0].trim()||req.headers.get('x-real-ip')||'unknown';const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);const source=Array.from(new Uint8Array(await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(ip)))).map(x=>x.toString(16).padStart(2,'0')).join('');const r=await db.rpc('claim_portal_recovery',{p_email:email,p_source:source});if(r.error||!r.data)return accepted();
+ }else return respond(400,'Invalid action');
+ const password=Deno.env.get('VIP_SMTP_PASSWORD');if(!password)return bootstrapId?respond(503,'Mail configuration unavailable'):accepted();
+ const mail=nodemailer.createTransport({host:'smtp.transip.email',port:465,secure:true,auth:{user:'info@vipcapital.eu',pass:password},connectionTimeout:10000,greetingTimeout:10000,socketTimeout:15000,tls:{minVersion:'TLSv1.2',rejectUnauthorized:true}});
+ try{
+ const result=await db.auth.admin.generateLink({type,email,options:{redirectTo:'https://vipcapital.eu/set-password.html'}});if(result.error||!result.data?.properties?.action_link)throw Error('Link unavailable');
+ const invite=type==='invite',url=result.data.properties.action_link,title=invite?'Your private access.':'Reset your password.',description=invite?'Your VIP Capital portal account is ready to activate. Use the secure link below to set your password.':'Use the secure link below to choose a new password. If you did not request this, ignore this email.',label=invite?'Activate account':'Reset password';
+ await mail.sendMail({from:'VIP Capital <info@vipcapital.eu>',to:email,subject:invite?'VIP Capital | Activate your portal account':'VIP Capital | Reset your password',text:description+'\n\n'+url,html:template(title,description,label,url)});
+ if(bootstrapId)await db.from('portal_bootstrap_mail').update({status:'sent',user_id:result.data.user.id,sent_at:new Date().toISOString()}).eq('id',bootstrapId);
+ return bootstrapId?respond(200,'Invitation sent'):accepted();
+ }catch{if(bootstrapId)await db.from('portal_bootstrap_mail').update({status:'failed'}).eq('id',bootstrapId);return bootstrapId?respond(502,'Invitation could not be delivered'):accepted()}finally{mail.close()}
+});

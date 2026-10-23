@@ -1,9 +1,9 @@
-import {prepareDocumentPreview,setDocumentAccess} from './document-sharing.js?v=20261022-viewrights1';
-import {pdfBadge,previewButton,closePdfPreview} from './pdf-preview.js?v=20261022-viewrights1';
-import {loadAssignedDocuments} from './shared-documents.js?v=20261022-viewrights1';
-import {initClientFile,loadClientFile} from './client-file.js?v=20261023-offers1';
-import {initCompanyProfile,loadCompanyAdmin} from './company-profile.js?v=20261022-saved-assets1';
-import { config } from './portal-config.js';
+import {prepareDocumentPreview,setDocumentAccess} from './document-sharing.js?v=20261023-vip-mail1';
+import {pdfBadge,previewButton,closePdfPreview} from './pdf-preview.js?v=20261023-vip-mail1';
+import {loadAssignedDocuments} from './shared-documents.js?v=20261023-vip-mail1';
+import {initClientFile,loadClientFile} from './client-file.js?v=20261023-vip-mail1';
+import {initCompanyProfile,loadCompanyAdmin} from './company-profile.js?v=20261023-vip-mail1';
+import { config } from './portal-config.js?v=20261023-vip-mail1';
 
 const $ = id => document.getElementById(id);
 const page = document.body.dataset.page;
@@ -257,17 +257,17 @@ async function start() {
   if($('logout')) $('logout').addEventListener('click',()=>action($('logout'),async()=>{check(await db.auth.signOut());location.replace('client-login.html');}));
   if(page==='login') {
     $('login-form').hidden=false;
-    if(session) { location.replace('documents.html?v=20261020-profile2'); return; }
+    if(session) { location.replace('documents.html?v=20261023-vip-mail1'); return; }
     $('login-form').addEventListener('submit',event=>{event.preventDefault();action($('login-button'),async()=>{
       const result=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
       if(result.error){message('Sign-in unsuccessful. Check your email and password, or contact VIP Capital.');return;}
-      location.replace('documents.html?v=20261020-profile2');
+      location.replace('documents.html?v=20261023-vip-mail1');
     });});
   } else if(page==='recovery') {
     $('recovery-form').hidden=false;
     $('recovery-form').addEventListener('submit',event=>{event.preventDefault();action($('recovery-button'),async()=>{
       if(!$('recovery-form').reportValidity())return;
-      const result=await db.auth.resetPasswordForEmail($('recovery-email').value.trim(),{redirectTo:new URL('set-password.html',location.href).href});
+      const response=await fetch(config.url+'/functions/v1/portal-auth',{method:'POST',headers:{'Content-Type':'application/json',apikey:config.publishableKey,Authorization:'Bearer '+config.functionKey},body:JSON.stringify({action:'recovery',email:$('recovery-email').value.trim()})});const result={error:!response.ok};
       const feedback=$('recovery-result');feedback.hidden=false;
       if(result.error){feedback.textContent='We could not process your request. Please wait a moment and try again.';return;}
       feedback.textContent='If this email is eligible for a VIP Capital account, you will receive a password reset email shortly. Check your spam folder and use the link in the newest email.';
@@ -280,13 +280,13 @@ async function start() {
     $('password-form').hidden=false;
     $('password-form').addEventListener('submit',event=>{event.preventDefault();action($('save-password'),async()=>{
       if($('password').value!==$('confirm').value){message('The passwords do not match.');return;}
-      check(await db.auth.updateUser({password:$('password').value})); location.replace('documents.html?v=20261020-profile2');
+      check(await db.auth.updateUser({password:$('password').value})); location.replace('documents.html?v=20261023-vip-mail1');
     });});
   } else if(await authorize()) {
     if($('refresh-submissions')) $('refresh-submissions').addEventListener('click',()=>action($('refresh-submissions'),loadSubmissions));
     if(page==='company') await initCompanyProfile({db,member,check,action,message});
-    if(page==='documents') { initClientFile(); const company=await initCompanyProfile({db,member,check,action,message}); companyContext=company; company.subscribe(()=>loadClientFile({db,member,company})); const {bindNda}=await import('./nda.js?v=20261023-date1');await bindNda({db,member,check,action,message,onSubmitted:loadSubmissions,company}); $('search').addEventListener('input',renderDocuments);$('category').addEventListener('change',renderDocuments);bindClientUpload();await loadDocuments();await loadSubmissions(); }
-    if(page==='admin') {const {initAdminWorkspace}=await import('./admin-workspace.js?v=20261023-offers1');initAdminWorkspace();const {bindAccessAdmin}=await import('./access-requests.js?v=20261021-history1');await bindAccessAdmin({db,check,message,onInvited:async()=>{await loadAdmin();await loadCompanyAdmin({db,check,action,message,members});}});bindAdmin();await loadAdmin();await loadSubmissions();await loadCompanyAdmin({db,check,action,message,members});$('refresh-companies').addEventListener('click',()=>action($('refresh-companies'),()=>loadCompanyAdmin({db,check,action,message,members})));}
+    if(page==='documents') { initClientFile(); const company=await initCompanyProfile({db,member,check,action,message}); companyContext=company; company.subscribe(()=>loadClientFile({db,member,company})); const {bindNda}=await import('./nda.js?v=20261023-vip-mail1');await bindNda({db,member,check,action,message,onSubmitted:loadSubmissions,company}); $('search').addEventListener('input',renderDocuments);$('category').addEventListener('change',renderDocuments);bindClientUpload();await loadDocuments();await loadSubmissions(); }
+    if(page==='admin') {const {initAdminWorkspace}=await import('./admin-workspace.js?v=20261023-vip-mail1');initAdminWorkspace();const {bindAccessAdmin}=await import('./access-requests.js?v=20261023-vip-mail1');await bindAccessAdmin({db,check,message,onInvited:async()=>{await loadAdmin();await loadCompanyAdmin({db,check,action,message,members});}});bindAdmin();await loadAdmin();await loadSubmissions();await loadCompanyAdmin({db,check,action,message,members});$('refresh-companies').addEventListener('click',()=>action($('refresh-companies'),()=>loadCompanyAdmin({db,check,action,message,members})));}
   }
 }
 start().catch(fail);

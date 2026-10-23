@@ -1,4 +1,4 @@
-import {config} from './portal-config.js';
+import {config} from './portal-config.js?v=20261023-vip-mail1';
 const fields=['B_COMPANY','B_REGISTRATION','B_ADDRESS','B_COUNTRY','B_REPRESENTATIVE','B_TITLE','B_PHONE','B_EMAIL','B_WEBSITE'];
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 const form=document.getElementById('access-form');
@@ -7,7 +7,7 @@ if(form)form.addEventListener('submit',async event=>{
  const button=document.getElementById('request-submit'),result=document.getElementById('request-result');button.disabled=true;result.hidden=false;result.textContent='Submitting your request…';
  try{
   const details=Object.fromEntries(fields.map(key=>[key,form.elements[key].value.trim()]));
-  const response=await fetch(config.url+'/functions/v1/access-requests',{method:'POST',headers:{'Content-Type':'application/json',apikey:config.publishableKey},body:JSON.stringify({action:'request',details,message:form.elements.message.value.trim(),privacy:form.elements.privacy.checked,website_trap:form.elements.website_trap.value})});
+  const response=await fetch(config.url+'/functions/v1/access-requests',{method:'POST',headers:{'Content-Type':'application/json',apikey:config.publishableKey,Authorization:'Bearer '+config.functionKey},body:JSON.stringify({action:'request',details,message:form.elements.message.value.trim(),privacy:form.elements.privacy.checked,website_trap:form.elements.website_trap.value})});
   const data=await response.json();if(!response.ok)throw new Error(data.message||'Unable to submit your request. Please try again shortly.');
   result.textContent=data.message;for(const input of form.querySelectorAll('input,textarea,button'))input.disabled=true;result.scrollIntoView({block:'nearest',behavior:'smooth'});
  }catch(error){result.textContent=error.message||'Unable to submit your request. Please try again shortly.';button.disabled=false;}
@@ -35,8 +35,9 @@ export async function bindAccessAdmin({db,check,message,onInvited}){
     if(!confirm(prompt))return;
     for(const b of actions.querySelectorAll('button'))b.disabled=true;feedback.hidden=false;feedback.textContent=kind==='approve'?'Preparing invitation…':'Updating request…';
     try{
-     const {data,error}=await db.functions.invoke('access-requests',{body:{action:kind,id:r.id}});
-     if(error){let text='Unable to process the request. Refresh and try again.';try{const response=await error.context.json();text=response.message||text;}catch{}throw new Error(text);}
+     const {data:{session}}=await db.auth.getSession();if(!session)throw Error('Sign in again.');
+     const response=await fetch(config.url+'/functions/v1/access-requests',{method:'POST',headers:{'Content-Type':'application/json',apikey:config.publishableKey,Authorization:'Bearer '+config.functionKey,'x-portal-authorization':'Bearer '+session.access_token},body:JSON.stringify({action:kind,id:r.id})});
+     const data=await response.json();if(!response.ok)throw Error(data.message||'Unable to process the request.');
      message(data.message);document.getElementById('status')?.scrollIntoView({block:'nearest',behavior:'smooth'});await load();if(kind==='approve')await onInvited();
     }catch(error){feedback.hidden=false;feedback.textContent=error.message||'Unable to process the request.';message(feedback.textContent);for(const b of actions.querySelectorAll('button'))b.disabled=false;}
    }
