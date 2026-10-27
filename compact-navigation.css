@@ -1,0 +1,15 @@
+/* Shared compact public navigation, aligned with the page content. */
+body>header:has(#main-nav){position:relative;z-index:60;display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;direction:ltr;height:90px;min-height:90px;max-width:1200px;margin-inline:auto;padding:12px 24px;gap:18px}
+body>header:has(#main-nav)>.brand{order:0;margin:0;flex-shrink:0}
+body>header:has(#main-nav)>.brand img{display:block;width:128px;height:auto}
+body>header:has(#main-nav)>.header-actions{order:1;margin-left:auto;margin-right:0;display:flex;flex-wrap:nowrap;align-items:center;gap:14px}
+body>header:has(#main-nav)>.menu-toggle{order:2;display:flex;flex-direction:column;justify-content:center;gap:5px;flex-shrink:0;width:44px;height:44px;padding:10px;margin:0;border:1px solid #d8b45c77;background:transparent;color:var(--gold,#d8b45c);cursor:pointer}
+body>header:has(#main-nav)>.menu-toggle span{display:block;width:22px;height:2px;margin:0;background:currentColor}
+body>header:has(#main-nav)>#main-nav{display:none;position:absolute;z-index:65;inset:100% 0 auto;width:auto;margin:0;padding:18px 24px;background:#0c1927;border-top:1px solid #d8b45c55;box-shadow:0 14px 28px #0005;flex-direction:column;align-items:stretch;gap:0;max-height:calc(100dvh - 110px);overflow-y:auto}
+body>header:has(#main-nav)>#main-nav.is-open{display:flex}
+body>header:has(#main-nav)>#main-nav>a,body>header:has(#main-nav)>#main-nav .vip-management-toggle{display:block;padding:12px 0;width:100%;font-size:12px;text-align:start;letter-spacing:.06em}
+body>header:has(#main-nav)>#main-nav .vip-management-nav{display:block;width:100%}
+body>header:has(#main-nav)>#main-nav .vip-management-options{position:static;margin:0 0 10px;padding:4px 12px;min-width:0;box-shadow:none}
+body>header:has(#main-nav)>.menu-toggle:focus-visible{outline:2px solid #d8b45c;outline-offset:3px}
+@media(max-width:650px){body>header:has(#main-nav){height:76px;min-height:76px;padding:10px 14px;gap:10px}body>header:has(#main-nav)>.brand img{width:95px}body>header:has(#main-nav)>.header-actions{gap:8px}body>header:has(#main-nav)>.menu-toggle{width:36px;height:38px;padding:7px}body>header:has(#main-nav)>#main-nav{padding:14px}}
+@media(max-width:360px){body>header:has(#main-nav){padding-inline:10px;gap:7px}body>header:has(#main-nav)>.brand img{width:78px}body>header:has(#main-nav)>.header-actions{gap:6px}}
