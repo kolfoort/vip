@@ -2,7 +2,7 @@ import {prepareDocumentPreview,setDocumentAccess} from './document-sharing.js?v=
 import {pdfBadge,previewButton,closePdfPreview} from './pdf-preview.js?v=20261023-vip-mail1';
 import {loadAssignedDocuments} from './shared-documents.js?v=20261023-vip-mail1';
 import {initClientFile,loadClientFile} from './client-file.js?v=20261023-vip-mail1';
-import {initCompanyProfile,loadCompanyAdmin} from './company-profile.js?v=20261023-vip-mail1';
+import {initCompanyProfile,loadCompanyAdmin} from './company-profile.js?v=20261027-viproles1';
 import { config } from './portal-config.js?v=20261023-vip-mail1';
 
 const $ = id => document.getElementById(id);

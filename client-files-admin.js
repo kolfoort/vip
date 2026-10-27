@@ -1,7 +1,8 @@
+import {mountCounterpartyRole} from './counterparty-role.js?v=20261027-viproles1';
 import {mountMCNDAApprovals} from './mcnda-approval.js';
 import {prepareDocumentPreview,setDocumentAccess} from './document-sharing.js?v=20261022-viewrights1';
 import {pdfBadge,previewButton,closePdfPreview} from './pdf-preview.js?v=20261022-viewrights1';
-import {companyFields} from './company-profile.js?v=20261021-company1';
+import {companyFields} from './company-profile.js?v=20261027-viproles1';
 import {config} from './portal-config.js';
 const $=id=>document.getElementById(id),escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const check=r=>{if(r.error)throw r.error;return r.data};let db,people=[],selected,version=0;
 function message(t){$('status').textContent=t;$('status').hidden=!t}function email(id){return people.find(p=>p.user_id===id)?.email||'Account unavailable'}
@@ -23,6 +24,7 @@ async function refresh(){closePdfPreview();const tick=++version,id=selected;$('c
  document.querySelectorAll('[data-upload],[data-shared],[data-submission]').forEach(button=>{let record,bucket,path;if(button.dataset.upload){record=files.find(x=>x.id===button.dataset.upload);bucket='vip-client-uploads';path=record?.storage_path}else if(button.dataset.shared){record=shared.find(x=>x.id===button.dataset.shared);bucket='vip-documents';path=record?.storage_path}else{record={title:'Signed MCNDA'};bucket='vip-client-uploads';path=button.dataset.owner+'/'+button.dataset.submission+'.pdf'}if(!path)return;button.before(previewButton({db,bucket,path,title:record.title}));button.closest('article')?.prepend(pdfBadge())});
  function viewFile(view){offersSection.hidden=view!=='offers';overview.hidden=view!=='overview';sections.forEach((section,i)=>section.hidden=!(view==='company'?i===0:view==='agreements'?[1,2,3].includes(i):view==='documents'?i===4:false));for(const b of tabs.children){b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-selected',String(b.dataset.view===view))}}
  for(const [key,label] of [['overview','Overview'],['agreements','Agreements'],['offers','Offers'],['documents','Documents'],['company','Company profile']]){const b=document.createElement('button');b.type='button';b.dataset.view=key;b.textContent=label;b.onclick=()=>viewFile(key);tabs.append(b)}file.prepend(tabs,overview);overview.querySelectorAll('[data-dossier-go]').forEach(b=>b.onclick=()=>viewFile(b.dataset.dossierGo));viewFile('overview');
+ await mountCounterpartyRole({db,userId:id,container:sections[0],message});
  await mountMCNDAApprovals({db,recipient:id,container:sections[3],admin:true,message});
  
 
