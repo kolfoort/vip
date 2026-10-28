@@ -1,9 +1,10 @@
-import {prepareDocumentPreview,setDocumentAccess} from './document-sharing.js?v=20261023-vip-mail1';
-import {pdfBadge,previewButton,closePdfPreview} from './pdf-preview.js?v=20261023-vip-mail1';
-import {loadAssignedDocuments} from './shared-documents.js?v=20261023-vip-mail1';
-import {initClientFile,loadClientFile} from './client-file.js?v=20261023-vip-mail1';
-import {initCompanyProfile,loadCompanyAdmin} from './company-profile.js?v=20261027-viproles1';
-import { config } from './portal-config.js?v=20261023-vip-mail1';
+import {initializeAccountLanguage,setLanguage} from './portal-language.js?v=20261028-vip-alignment';
+import {prepareDocumentPreview,setDocumentAccess} from './document-sharing.js?v=20261028-vip-alignment';
+import {pdfBadge,previewButton,closePdfPreview} from './pdf-preview.js?v=20261028-vip-alignment';
+import {loadAssignedDocuments} from './shared-documents.js?v=20261028-vip-alignment';
+import {initClientFile,loadClientFile} from './client-file.js?v=20261028-vip-alignment';
+import {initCompanyProfile,loadCompanyAdmin} from './company-profile.js?v=20261028-vip-alignment';
+import { config } from './portal-config.js';
 
 const $ = id => document.getElementById(id);
 const page = document.body.dataset.page;
@@ -20,14 +21,16 @@ function resetPrivateView() { closePdfPreview();generation++; documents = []; me
 function date(value) { return value ? new Date(value+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'; }
 async function action(button, work) { button.disabled = true; try { await work(); } catch(error) { fail(error); } finally { button.disabled = false; } }
 async function authorize() {
-  const {user} = check(await db.auth.getUser());
+  const authResult=await db.auth.getUser();const user=authResult.data?.user;
   if(!user) { location.replace('client-login.html'); return false; }
   member = check(await db.from('portal_members').select('user_id,email,is_admin,active').eq('user_id',user.id).maybeSingle());
   if(!member?.active) { resetPrivateView(); message('Your access has not been enabled. Please contact VIP Capital.'); return false; }
   if(!check(await db.rpc('my_portal_access_allowed'))) {resetPrivateView();message('Your company access is paused or archived. Please contact VIP Capital.');return false;}
   if(page === 'admin' && !member.is_admin) { resetPrivateView(); message('This page is reserved for VIP Capital administrators.'); return false; }
-  if(member.is_admin){document.querySelectorAll('header .nav a[href^="company-profile.html"]').forEach(link=>link.remove());if(page==='company'){location.replace('document-admin.html');return false;}}
+  if(member.is_admin){document.querySelectorAll('header .nav a[href^="company-profile.html"]').forEach(link=>link.remove());if(page==='company'){location.replace('admin-home.html');return false;}}
   if(page==='documents'&&member.is_admin){location.replace('client-files.html');return false;}
+  member.company_name=typeof user.user_metadata?.company_name==='string'?user.user_metadata.company_name.trim():'';
+  await initializeAccountLanguage(db);
   $('account').textContent = member.email;
   $('protected').hidden = false;
   if(member.is_admin && $('admin-link')) $('admin-link').hidden = false;
@@ -83,7 +86,7 @@ function renderMcndaStatus() {
   });
   existing.replaceChildren();existing.hidden=!signed;preparation.hidden=!!signed;if($('nda-readonly'))$('nda-readonly').hidden=!!signed;$('nda-form-intro').hidden=!!signed;
   const pending=mcndaAssignments.some(a=>a.user_id===member.user_id&&a.status==='assigned');
-  if(!signed&&!pending){$('nda-section').hidden=true;return;}
+  const draftReview=mcndaAssignments.some(a=>a.user_id===member.user_id&&a.status==='draft_review');if(draftReview&&!pending){$('nda-section').hidden=false;existing.hidden=true;preparation.hidden=true;$('nda-form-intro').hidden=true;if($('nda-readonly'))$('nda-readonly').hidden=false;$('nda-heading').textContent='MCNDA draft — for review only';$('nda-intro').hidden=false;$('nda-intro').textContent='VIP Capital has assigned this draft for read-only review. Signing becomes available only after VIP Capital releases it for signature.';return;}if(!signed&&!pending){$('nda-section').hidden=true;return;}
   $('nda-section').hidden=false;
   if(pending){existing.hidden=true;preparation.hidden=false;if($('nda-readonly'))$('nda-readonly').hidden=false;$('nda-form-intro').hidden=false;$('nda-heading').textContent='Assigned MCNDA';$('nda-intro').hidden=true;return;}
   if(!signed){$('nda-section').hidden=true;return;}
@@ -254,6 +257,7 @@ async function start() {
   db=createClient(config.url,config.publishableKey,{auth:{storage:window.sessionStorage,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'implicit'}});
   db.auth.onAuthStateChange(event=>{if(event==='SIGNED_OUT'){resetPrivateView();if(page!=='login')location.replace('client-login.html');}});
   const {session}=check(await db.auth.getSession());
+  if(['en','nl','de','es','ar'].includes(session?.user?.user_metadata?.language))setLanguage(session.user.user_metadata.language);
   if($('logout')) $('logout').addEventListener('click',()=>action($('logout'),async()=>{check(await db.auth.signOut());location.replace('client-login.html');}));
   if(page==='login') {
     $('login-form').hidden=false;
@@ -285,8 +289,8 @@ async function start() {
   } else if(await authorize()) {
     if($('refresh-submissions')) $('refresh-submissions').addEventListener('click',()=>action($('refresh-submissions'),loadSubmissions));
     if(page==='company') await initCompanyProfile({db,member,check,action,message});
-    if(page==='documents') { initClientFile(); const company=await initCompanyProfile({db,member,check,action,message}); companyContext=company; company.subscribe(()=>loadClientFile({db,member,company})); const {bindNda}=await import('./nda.js?v=20261023-vip-mail1');await bindNda({db,member,check,action,message,onSubmitted:loadSubmissions,company}); $('search').addEventListener('input',renderDocuments);$('category').addEventListener('change',renderDocuments);bindClientUpload();await loadDocuments();await loadSubmissions(); }
-    if(page==='admin') {const {initAdminWorkspace}=await import('./admin-workspace.js?v=20261027-billing1');initAdminWorkspace();const {bindAccessAdmin}=await import('./access-requests.js?v=20261023-vip-mail1');await bindAccessAdmin({db,check,message,onInvited:async()=>{await loadAdmin();await loadCompanyAdmin({db,check,action,message,members});}});bindAdmin();await loadAdmin();await loadSubmissions();await loadCompanyAdmin({db,check,action,message,members});$('refresh-companies').addEventListener('click',()=>action($('refresh-companies'),()=>loadCompanyAdmin({db,check,action,message,members})));}
+    if(page==='documents') { initClientFile(); const company=await initCompanyProfile({db,member,check,action,message}); companyContext=company; company.subscribe(()=>loadClientFile({db,member,company})); const {bindNda}=await import('./nda.js?v=20261028-vip-alignment');await bindNda({db,member,check,action,message,onSubmitted:loadSubmissions,company}); $('search').addEventListener('input',renderDocuments);$('category').addEventListener('change',renderDocuments);bindClientUpload();await loadDocuments();await loadSubmissions(); }
+    if(page==='admin') {const {initAdminWorkspace}=await import('./admin-workspace.js?v=20261028-vip-alignment');initAdminWorkspace();const {bindAccessAdmin}=await import('./access-requests.js?v=20261028-vip-alignment');await bindAccessAdmin({db,check,message,onInvited:async()=>{await loadAdmin();await loadCompanyAdmin({db,check,action,message,members});}});bindAdmin();await loadAdmin();await loadSubmissions();await loadCompanyAdmin({db,check,action,message,members});$('refresh-companies').addEventListener('click',()=>action($('refresh-companies'),()=>loadCompanyAdmin({db,check,action,message,members})));}
   }
 }
 start().catch(fail);

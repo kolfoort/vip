@@ -1,4 +1,5 @@
-export async function mountCounterpartyRole({db,userId,container,message}){
+export async function mountCounterpartyRole({db,userId,container,message,individual=false}){
+ if(individual){const p=document.createElement('p');p.textContent='Private individual · Introducer / Broker';container.append(p);return;}
  const labels={introducer_broker:'Introducer / Broker',end_buyer_user:'End Buyer / End User',jv_partner:'JV Partner',trader_reseller:'Trader / Reseller',supplier_seller:'Supplier / Seller'};
  const form=document.createElement('form');form.className='counterparty-role';
  const heading=document.createElement('h3');heading.textContent='Counterparty type';
