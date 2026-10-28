@@ -1,4 +1,4 @@
-import {initializeAccountLanguage} from './portal-language.js?v=20261028-vip-alignment';
+import {initializeAccountLanguage} from './portal-language.js?v=20261028-auth-flags';
 import {initSigningImages} from './signing-images.js?v=20261028-vip-alignment';
 import {createCommissionPDF} from "./commission-pdf.js?v=20261028-vip-alignment";
 import {config} from "./portal-config.js";

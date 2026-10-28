@@ -1,4 +1,4 @@
-import {initializeAccountLanguage,setLanguage} from './portal-language.js?v=20261028-vip-alignment';
+import {initializeAccountLanguage,setLanguage} from './portal-language.js?v=20261028-auth-flags';
 import {prepareDocumentPreview,setDocumentAccess} from './document-sharing.js?v=20261028-vip-alignment';
 import {pdfBadge,previewButton,closePdfPreview} from './pdf-preview.js?v=20261028-vip-alignment';
 import {loadAssignedDocuments} from './shared-documents.js?v=20261028-vip-alignment';

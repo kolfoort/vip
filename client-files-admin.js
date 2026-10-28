@@ -1,5 +1,5 @@
 import {individualFields,isIndividual,individualParty,mountIdentity} from './individual-profile.js?v=20261028-vip-alignment';
-import {initializeAccountLanguage,languageSelect} from './portal-language.js?v=20261028-vip-alignment';
+import {initializeAccountLanguage,languageSelect} from './portal-language.js?v=20261028-auth-flags';
 import {mountMCNDAApprovals} from './mcnda-approval.js?v=20261028-vip-alignment';
 import {mountCounterpartyRole} from './counterparty-role.js?v=20261028-vip-alignment';
 import {prepareDocumentPreview,setDocumentAccess} from './document-sharing.js?v=20261028-vip-alignment';
