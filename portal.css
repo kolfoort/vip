@@ -29,8 +29,8 @@ select{-webkit-appearance:none;appearance:none;min-height:46px;padding:12px 44px
 
 .document-permission-row{display:grid;grid-template-columns:minmax(160px,1fr) minmax(180px,250px);gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.document-permission-row label{margin:0;overflow-wrap:anywhere}.document-permission-row select{font-size:13px}.pdf-page-image{display:block;width:100%;max-width:1100px;height:auto;border:1px solid var(--line);margin:20px auto;background:white}@media(max-width:600px){.document-permission-row{grid-template-columns:1fr}}
 
-body[data-page="login"] .account a[href="request-access.html"]{color:var(--gold);text-decoration-color:currentColor;font-weight:600}
-body[data-page="login"] .account a[href="request-access.html"]:hover{color:#896b24}
+body[data-page="login"] .account a.request-access-link{color:var(--gold);text-decoration-color:currentColor;font-weight:600}
+body[data-page="login"] .account a.request-access-link:hover{color:#896b24}
 
 /* VIP Capital logo proportions. */
 header .brand img{width:180px;height:auto;max-height:none;object-fit:contain}header .bar{min-height:125px}.auth{max-width:520px}.auth h1{font-size:44px}@media(max-width:650px){header .brand img{width:145px}.auth h1{font-size:36px}}
