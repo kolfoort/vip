@@ -1,11 +1,11 @@
 import {PDFDocument,StandardFonts,rgb} from './assets/vendor/pdf-lib.esm.min.js';
 
-export const MCNDA_VERSION='VIP-MCNDA-2026-10-29-R3';
+export const MCNDA_VERSION='VIP-MCNDA-2026-10-29-R4';
 export async function createNda(values,signature,stamp,{now=new Date(),reference='',email='',draft=false,loadTemplate}={}){
  const personal=values.ACCOUNT_TYPE==='individual',kind=personal?'individual':'company';
  const required=personal?['B_COMPANY','B_ADDRESS','B_COUNTRY','B_EMAIL','B_PHONE','PASSPORT_NUMBER']:['B_COMPANY','B_REGISTRATION','B_ADDRESS','B_COUNTRY','B_REPRESENTATIVE','B_TITLE','B_EMAIL','B_PHONE'];
  if(required.some(key=>!String(values[key]||'').trim()))throw Error('Complete all required profile and identity details before preparing the MCNDA.');
- const bytes=loadTemplate?await loadTemplate(kind):await (async()=>{const r=await fetch(new URL('./assets/mcnda/vip-mcnda-'+kind+'-20261029-confirmation.pdf',import.meta.url));if(!r.ok)throw Error('The MCNDA template could not be loaded. Please contact VIP Capital.');return r.arrayBuffer()})();
+ const bytes=loadTemplate?await loadTemplate(kind):await (async()=>{const r=await fetch(new URL('./assets/mcnda/vip-mcnda-'+kind+'-20261029-protection.pdf',import.meta.url));if(!r.ok)throw Error('The MCNDA template could not be loaded. Please contact VIP Capital.');return r.arrayBuffer()})();
  const pdf=await PDFDocument.load(bytes);
  if(pdf.getPageCount()!==8)throw Error('Unexpected MCNDA template. Please contact VIP Capital.');
  // The approved legal pages retain their original per-page, two-column flow.

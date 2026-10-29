@@ -1,6 +1,6 @@
 import {individualFields,isIndividual,individualParty,mountIdentity} from './individual-profile.js?v=20261028-vip-alignment';
 import {initializeAccountLanguage,languageSelect} from './portal-language.js?v=20261028-auth-flags';
-import {mountMCNDAApprovals} from './mcnda-approval.js?v=20261029-confirmation';
+import {mountMCNDAApprovals} from './mcnda-approval.js?v=20261029-all-signatures2';
 import {mountCounterpartyRole} from './counterparty-role.js?v=20261028-vip-alignment';
 import {prepareDocumentPreview,setDocumentAccess} from './document-sharing.js?v=20261028-vip-alignment';
 import {pdfBadge,previewButton,closePdfPreview} from './pdf-preview.js?v=20261028-vip-alignment';
@@ -62,7 +62,7 @@ async function startClientFiles(){
   document.querySelector('main').replaceWith(doc.querySelector('main'));document.querySelector('header + nav#workspace-nav')?.remove();document.body.classList.add('commission-page');
   const style=document.createElement('link');style.rel='stylesheet';style.href='commission.css?v=20261028-vip-alignment';document.head.append(style);
   const back=document.createElement('a');back.className='button secondary';back.textContent='Back to client file';back.href='client-files.html?client='+encodeURIComponent(new URLSearchParams(location.search).get('client')||'');document.querySelector('main').prepend(back);
-  await import('./commission.js?v=20261028-vip-alignment');
+  await import('./commission.js?v=20261029-all-signatures2');
  }else{await init();document.getElementById('workspace-nav').hidden=false;}
 }
 startClientFiles().catch(e=>{const box=document.getElementById('status')||document.getElementById('message');box.textContent=e.message||'Could not load client file.';box.hidden=false;});

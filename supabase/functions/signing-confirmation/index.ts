@@ -20,13 +20,14 @@ Deno.serve(async req=>{
  const jwt=req.headers.get('x-portal-authorization')?.replace(/^Bearer /i,'');if(!jwt)return response(401,{error:'Sign in required'});
  const {data:{user},error:authError}=await db.auth.getUser(jwt);if(authError||!user)return response(401,{error:'Sign in required'});
  let b;try{const raw=await req.text();if(raw.length>1500)return response(413,{error:'Too large'});b=JSON.parse(raw)}catch{return response(400,{error:'Invalid request'})}
- if(!['mcnda_client','mcnda_admin'].includes(b.purpose)||typeof b.document_id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(b.document_id)||typeof b.document_hash!=='string'||!/^[0-9a-f]{64}$/.test(b.document_hash))return response(400,{error:'Invalid document'});
+ if(!['mcnda_client','mcnda_admin','commission_client','commission_admin','spa_client','spa_admin','jv_client','jv_admin','fco_client','fco_admin'].includes(b?.purpose)||typeof b.document_id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(b.document_id)||typeof b.document_hash!=='string'||!/^[0-9a-f]{64}$/.test(b.document_hash))return response(400,{error:'Invalid document'});
  const password=Deno.env.get('VIP_SMTP_PASSWORD');if(!password)return response(503,{error:'Mail unavailable'});
  let n:number;do{n=crypto.getRandomValues(new Uint32Array(1))[0]}while(n>=4200000000);
  const code=String(n%100000000).padStart(8,'0'),id=crypto.randomUUID();
- const issue=await db.rpc('issue_signing_confirmation',{p_user_id:user.id,p_id:id,p_purpose:b.purpose,p_document_id:b.document_id,p_document_hash:b.document_hash,p_code_hash:await sha(id+':'+code)});
+ const generic=!b.purpose.startsWith('mcnda_');if(generic&&(!Number.isInteger(b.revision)||b.revision<1||(b.review_token!=null&&(typeof b.review_token!=='string'||!/^[0-9a-f-]{36}$/i.test(b.review_token)))))return response(400,{error:'Invalid review'});
+ const issue=await db.rpc(generic?'issue_agreement_signing_confirmation':'issue_signing_confirmation',{p_user_id:user.id,p_id:id,p_purpose:b.purpose,p_document_id:b.document_id,p_document_hash:b.document_hash,p_code_hash:await sha(id+':'+code),...(generic?{p_revision:b.revision,p_review_token:b.review_token||null}:{})});
  if(issue.error)return response(issue.error.message.includes('RATE_LIMIT')?429:403,{error:issue.error.message.includes('RATE_LIMIT')?'RATE_LIMIT':'Confirmation unavailable'});
- const language=translations[issue.data.language]?issue.data.language:'en',t=translations[language],direction=language==='ar'?'rtl':'ltr';
+ const language=translations[issue.data.language]?issue.data.language:'en',documentName=({mcnda:'MCNDA',commission:'Commission Agreement',spa:'SPA',jv:'JVA',fco:'FCO'} as Record<string,string>)[b.purpose.split('_')[0]],t=Object.fromEntries(Object.entries(translations[language]).map(([key,value])=>[key,value.replaceAll('MCNDA',documentName)])) as typeof translations[string],direction=language==='ar'?'rtl':'ltr';
  const mail=nodemailer.createTransport({host:'smtp.transip.email',port:465,secure:true,auth:{user:'info@vipcapital.eu',pass:password},connectionTimeout:10000,greetingTimeout:10000,socketTimeout:15000,tls:{minVersion:'TLSv1.2',rejectUnauthorized:true}});
  try{
   await mail.sendMail({from:'VIP Capital <info@vipcapital.eu>',to:issue.data.email,subject:'VIP Capital | '+t.title,messageId:`<signing-confirmation-${id}@vipcapital.eu>`,

@@ -1,0 +1,4 @@
+
+[functions.signing-confirmation]
+# Gateway retains its legacy JWT check; user JWT is verified separately in the handler.
+verify_jwt = true
