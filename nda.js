@@ -4,7 +4,7 @@ import { companyFields } from './company-profile.js?v=20261028-vip-alignment';
 const $=id=>document.getElementById(id);
 let specs=companyFields;
 const dateText=d=>new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Amsterdam',day:'numeric',month:'long',year:'numeric'}).format(d);
-import {createNda,MCNDA_VERSION} from './mcnda-pdf.js?v=20261029-financial';
+import {createNda,MCNDA_VERSION} from './mcnda-pdf.js?v=20261029-entity';
 export {createNda};
 async function imageFile(file){
  if(!file || !['image/png','image/jpeg'].includes(file.type)||file.size>5*1024*1024)throw new Error('Choose a PNG or JPG smaller than 5 MB.');

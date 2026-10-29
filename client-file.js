@@ -1,4 +1,4 @@
-import {mountMCNDAApprovals} from './mcnda-approval.js?v=20261029-financial';
+import {mountMCNDAApprovals} from './mcnda-approval.js?v=20261029-entity';
 import {pdfBadge,previewButton,closePdfPreview} from './pdf-preview.js?v=20261028-vip-alignment';
 import {loadAssignedDocuments} from './shared-documents.js?v=20261028-vip-alignment';
 const $=id=>document.getElementById(id);

@@ -2,7 +2,7 @@ import {initializeAccountLanguage,setLanguage} from './portal-language.js?v=2026
 import {prepareDocumentPreview,setDocumentAccess} from './document-sharing.js?v=20261028-vip-alignment';
 import {pdfBadge,previewButton,closePdfPreview} from './pdf-preview.js?v=20261028-vip-alignment';
 import {loadAssignedDocuments} from './shared-documents.js?v=20261028-vip-alignment';
-import {initClientFile,loadClientFile} from './client-file.js?v=20261029-financial';
+import {initClientFile,loadClientFile} from './client-file.js?v=20261029-entity';
 import {initCompanyProfile,loadCompanyAdmin} from './company-profile.js?v=20261028-vip-alignment';
 import { config } from './portal-config.js';
 
@@ -289,7 +289,7 @@ async function start() {
   } else if(await authorize()) {
     if($('refresh-submissions')) $('refresh-submissions').addEventListener('click',()=>action($('refresh-submissions'),loadSubmissions));
     if(page==='company') await initCompanyProfile({db,member,check,action,message});
-    if(page==='documents') { initClientFile(); const company=await initCompanyProfile({db,member,check,action,message}); companyContext=company; company.subscribe(()=>loadClientFile({db,member,company})); const {bindNda}=await import('./nda.js?v=20261029-financial');await bindNda({db,member,check,action,message,onSubmitted:loadSubmissions,company}); $('search').addEventListener('input',renderDocuments);$('category').addEventListener('change',renderDocuments);bindClientUpload();await loadDocuments();await loadSubmissions(); }
+    if(page==='documents') { initClientFile(); const company=await initCompanyProfile({db,member,check,action,message}); companyContext=company; company.subscribe(()=>loadClientFile({db,member,company})); const {bindNda}=await import('./nda.js?v=20261029-entity');await bindNda({db,member,check,action,message,onSubmitted:loadSubmissions,company}); $('search').addEventListener('input',renderDocuments);$('category').addEventListener('change',renderDocuments);bindClientUpload();await loadDocuments();await loadSubmissions(); }
     if(page==='admin') {const {initAdminWorkspace}=await import('./admin-workspace.js?v=20261028-vip-alignment');initAdminWorkspace();const {bindAccessAdmin}=await import('./access-requests.js?v=20261028-vip-alignment');await bindAccessAdmin({db,check,message,onInvited:async()=>{await loadAdmin();await loadCompanyAdmin({db,check,action,message,members});}});bindAdmin();await loadAdmin();await loadSubmissions();await loadCompanyAdmin({db,check,action,message,members});$('refresh-companies').addEventListener('click',()=>action($('refresh-companies'),()=>loadCompanyAdmin({db,check,action,message,members})));}
   }
 }
