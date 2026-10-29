@@ -1,0 +1,41 @@
+import {createClient} from 'npm:@supabase/supabase-js@2.102.0';
+import nodemailer from 'npm:nodemailer@7.0.11';
+
+const db=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{auth:{persistSession:false}});
+const translations:Record<string,{title:string,body:string,warning:string,expires:string,reference:string}>={
+ en:{title:'Confirm your MCNDA signature',body:'Enter this one-time code in the VIP Capital portal to confirm the exact MCNDA you have reviewed.',warning:'Do not share this code. VIP Capital will never ask you to send it by email or telephone. If you did not request this code, do not use it and contact VIP Capital.',expires:'Valid for 10 minutes. This code alone does not sign or accept any agreement.',reference:'Document reference'},
+ nl:{title:'Bevestig uw MCNDA-ondertekening',body:'Vul deze eenmalige code in het VIP Capital-portaal in om de exacte MCNDA die u heeft gecontroleerd te bevestigen.',warning:'Deel deze code niet. VIP Capital vraagt u nooit de code per e-mail of telefoon door te geven. Heeft u deze code niet aangevraagd, gebruik hem dan niet en neem contact op met VIP Capital.',expires:'10 minuten geldig. Deze code alleen ondertekent of aanvaardt geen overeenkomst.',reference:'Documentreferentie'},
+ de:{title:'Bestätigen Sie Ihre MCNDA-Unterzeichnung',body:'Geben Sie diesen Einmalcode im VIP Capital-Portal ein, um genau die von Ihnen geprüfte MCNDA zu bestätigen.',warning:'Geben Sie diesen Code nicht weiter. VIP Capital wird Sie niemals bitten, ihn per E-Mail oder telefonisch mitzuteilen. Wenn Sie den Code nicht angefordert haben, verwenden Sie ihn nicht und kontaktieren Sie VIP Capital.',expires:'10 Minuten gültig. Dieser Code allein stellt weder eine Unterzeichnung noch eine Annahme einer Vereinbarung dar.',reference:'Dokumentreferenz'},
+ es:{title:'Confirme la firma de su MCNDA',body:'Introduzca este código de un solo uso en el portal de VIP Capital para confirmar el MCNDA exacto que ha revisado.',warning:'No comparta este código. VIP Capital nunca le pedirá que lo comunique por correo electrónico ni por teléfono. Si no lo ha solicitado, no lo utilice y contacte con VIP Capital.',expires:'Válido durante 10 minutos. Este código por sí solo no firma ni acepta ningún acuerdo.',reference:'Referencia del documento'},
+ ar:{title:'تأكيد توقيع اتفاقية MCNDA',body:'أدخل رمز الاستخدام الواحد هذا في بوابة VIP Capital لتأكيد اتفاقية MCNDA المحددة التي راجعتها.',warning:'لا تشارك هذا الرمز. لن تطلب منك VIP Capital إرساله عبر البريد الإلكتروني أو الهاتف. إذا لم تطلب هذا الرمز، فلا تستخدمه وتواصل مع VIP Capital.',expires:'صالح لمدة 10 دقائق. لا يشكّل هذا الرمز وحده توقيعًا أو قبولًا لأي اتفاقية.',reference:'مرجع المستند'}
+};
+const escape=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
+const sha=async(s:string)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))).map(x=>x.toString(16).padStart(2,'0')).join('');
+Deno.serve(async req=>{
+ const origin=req.headers.get('origin'),headers={'Access-Control-Allow-Origin':'https://vipcapital.eu','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info,x-portal-authorization','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin','Cache-Control':'no-store'};
+ const response=(status:number,body:Record<string,unknown>)=>Response.json(body,{status,headers});
+ if(origin&&origin!=='https://vipcapital.eu')return response(403,{error:'Origin not allowed'});
+ if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
+ if(req.method!=='POST')return response(405,{error:'POST required'});
+ const jwt=req.headers.get('x-portal-authorization')?.replace(/^Bearer /i,'');if(!jwt)return response(401,{error:'Sign in required'});
+ const {data:{user},error:authError}=await db.auth.getUser(jwt);if(authError||!user)return response(401,{error:'Sign in required'});
+ let b;try{const raw=await req.text();if(raw.length>1500)return response(413,{error:'Too large'});b=JSON.parse(raw)}catch{return response(400,{error:'Invalid request'})}
+ if(!['mcnda_client','mcnda_admin'].includes(b.purpose)||typeof b.document_id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(b.document_id)||typeof b.document_hash!=='string'||!/^[0-9a-f]{64}$/.test(b.document_hash))return response(400,{error:'Invalid document'});
+ const password=Deno.env.get('VIP_SMTP_PASSWORD');if(!password)return response(503,{error:'Mail unavailable'});
+ let n:number;do{n=crypto.getRandomValues(new Uint32Array(1))[0]}while(n>=4200000000);
+ const code=String(n%100000000).padStart(8,'0'),id=crypto.randomUUID();
+ const issue=await db.rpc('issue_signing_confirmation',{p_user_id:user.id,p_id:id,p_purpose:b.purpose,p_document_id:b.document_id,p_document_hash:b.document_hash,p_code_hash:await sha(id+':'+code)});
+ if(issue.error)return response(issue.error.message.includes('RATE_LIMIT')?429:403,{error:issue.error.message.includes('RATE_LIMIT')?'RATE_LIMIT':'Confirmation unavailable'});
+ const language=translations[issue.data.language]?issue.data.language:'en',t=translations[language],direction=language==='ar'?'rtl':'ltr';
+ const mail=nodemailer.createTransport({host:'smtp.transip.email',port:465,secure:true,auth:{user:'info@vipcapital.eu',pass:password},connectionTimeout:10000,greetingTimeout:10000,socketTimeout:15000,tls:{minVersion:'TLSv1.2',rejectUnauthorized:true}});
+ try{
+  await mail.sendMail({from:'VIP Capital <info@vipcapital.eu>',to:issue.data.email,subject:'VIP Capital | '+t.title,messageId:`<signing-confirmation-${id}@vipcapital.eu>`,
+   text:t.title+'\n\n'+t.body+'\n\n'+code+'\n\n'+t.expires+'\n\n'+t.reference+': '+b.document_id+'\nSHA-256: '+b.document_hash+'\n\n'+t.warning,
+   html:`<!doctype html><html lang="${language}" dir="${direction}"><body style="margin:0;background:#f3f6f9;font:15px/1.7 Arial,sans-serif;color:#002040"><table role="presentation" width="100%"><tr><td align="center" style="padding:30px 16px"><table role="presentation" width="600" style="width:100%;max-width:600px;background:white;border:1px solid #dce3eb"><tr><td style="padding:26px 30px;border-bottom:3px solid #bd9a45"><img src="https://vipcapital.eu/portal-logo.png" width="180" height="101" alt="VIP Capital"></td></tr><tr><td style="padding:30px;text-align:${direction==='rtl'?'right':'left'}"><h1 style="font:28px Georgia,serif">${escape(t.title)}</h1><p>${escape(t.body)}</p><p dir="ltr" style="font:bold 30px monospace;letter-spacing:5px;background:#f3f6f9;padding:20px;text-align:center">${code}</p><p>${escape(t.expires)}</p><p style="font-size:12px">${escape(t.reference)}: <span dir="ltr">${b.document_id}</span></p><p dir="ltr" style="font:10px monospace;overflow-wrap:anywhere">SHA-256: ${b.document_hash}</p><p style="font-size:12px;color:#637387">${escape(t.warning)}</p></td></tr><tr><td dir="ltr" style="padding:22px 30px;background:#002040;color:white;font-size:11px">La Clava Elit BV · VIP Capital<br>Oude Apeldoornseweg 45-067 · 7333 NR Apeldoorn · The Netherlands<br>info@vipcapital.eu · www.vipcapital.eu</td></tr></table></td></tr></table></body></html>`});
+  const marked=await db.rpc('complete_signing_confirmation_delivery',{p_id:id,p_delivered:true});if(marked.error)throw marked.error;
+  return response(200,{challenge_id:id,expires_at:issue.data.expires_at});
+ }catch{
+  await db.rpc('complete_signing_confirmation_delivery',{p_id:id,p_delivered:false});
+  return response(502,{error:'Delivery unavailable'});
+ }finally{mail.close()}
+});

@@ -1,10 +1,11 @@
+import {confirmSigning} from './signing-confirmation.js?v=20261029-confirmation';
 import {isIndividual,individualParty,individualFields} from './individual-profile.js?v=20261028-vip-alignment';
 async function blobBase64(blob){const bytes=new Uint8Array(await blob.arrayBuffer());let s='';for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(s)}
 import { companyFields } from './company-profile.js?v=20261028-vip-alignment';
 const $=id=>document.getElementById(id);
 let specs=companyFields;
 const dateText=d=>new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Amsterdam',day:'numeric',month:'long',year:'numeric'}).format(d);
-import {createNda,MCNDA_VERSION} from './mcnda-pdf.js?v=20261029-entity';
+import {createNda,MCNDA_VERSION} from './mcnda-pdf.js?v=20261029-confirmation';
 export {createNda};
 async function imageFile(file){
  if(!file || !['image/png','image/jpeg'].includes(file.type)||file.size>5*1024*1024)throw new Error('Choose a PNG or JPG smaller than 5 MB.');
@@ -48,7 +49,9 @@ export async function bindNda({db,member,check,action,message,onSubmitted,compan
   if(!review||!$('nda-confirm').checked){message('Review the PDF and confirm your authority and agreement before submitting.');return;}
   if(dateText(review.now)!==dateText(new Date())){invalidate();message('The date has changed. Please generate a new preview.');return;}
   if(review.savedAssetsVersion){const latest=check(await db.from('portal_signing_profiles').select('version').eq('user_id',member.user_id).maybeSingle());if(latest?.version!==review.savedAssetsVersion){invalidate();await applyProfile(company.getProfile());message('Your saved signing images changed. Please review and confirm a new MCNDA preview.');return;}}
-  const current=review,path=member.user_id+'/'+current.id+'.pdf';if(current.blob.size>20*1024*1024){message('The PDF exceeds 20 MB. Please use smaller images.');return;}
+  const current=review,pdfHash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await current.blob.arrayBuffer()))).map(x=>x.toString(16).padStart(2,'0')).join('');
+  const confirmation=await confirmSigning({db,purpose:'mcnda_client',documentId:current.id,pdfHash});if(!confirmation)return;if(review!==current){message('The MCNDA changed. Generate and review a new PDF before signing.');return;}
+  const path=member.user_id+'/'+current.id+'.pdf';if(current.blob.size>20*1024*1024){message('The PDF exceeds 20 MB. Please use smaller images.');return;}
   check(await db.storage.from('vip-client-uploads').upload(path,current.blob,{contentType:'application/pdf',upsert:false}));
   let newStampPath='',savedStampPath=current.stampPath;
   try {
@@ -57,7 +60,7 @@ export async function bindNda({db,member,check,action,message,onSubmitted,compan
       const stampBlob=await (await fetch(current.stampData)).blob();
       check(await db.storage.from('vip-company-assets').upload(newStampPath,stampBlob,{contentType:'image/png',upsert:false}));savedStampPath=newStampPath;
     }
-    const result=await db.rpc('submit_mcnda_for_approval',{p_pdf:await blobBase64(current.blob),p_attestation:{document_template_version:MCNDA_VERSION,account_type:isIndividual(current.values)?'individual':'company',name:current.values.B_REPRESENTATIVE,authority:true,acceptance:true,assets_authorized:!!current.savedAssetsVersion,signing_version:current.savedAssetsVersion||null,reviewed_hash:Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await current.blob.arrayBuffer()))).map(x=>x.toString(16).padStart(2,'0')).join('')},p_id:current.id,p_details:{...current.values,MCNDA_TEMPLATE_VERSION:MCNDA_VERSION,B_STAMP_PATH:savedStampPath||'',B_PROFILE_ID:current.profileId},p_expected_version:current.profileVersion,p_note:'Completed and electronically signed via the VIP Capital portal. Awaiting explicit VIP Capital countersignature. Template '+MCNDA_VERSION+'. Reference: '+current.id+'. Account: '+member.email+'. Submitted: '+current.now.toISOString()+'. Company stamp: '+(current.hasStamp?'included':'not supplied')+'. '+(isIndividual(current.values)?'Individual signed in a personal capacity and confirmed agreement.':'Representative confirmed authority and agreement.')+(current.savedAssetsVersion?' Saved signing images explicitly authorized for this MCNDA. Signing profile version: '+current.savedAssetsVersion+'.':'')});
+    const result=await db.rpc('submit_mcnda_for_approval',{p_pdf:await blobBase64(current.blob),p_attestation:{confirmation_id:confirmation.confirmation_id,confirmation_token:confirmation.confirmation_token,document_template_version:MCNDA_VERSION,account_type:isIndividual(current.values)?'individual':'company',name:current.values.B_REPRESENTATIVE,authority:true,acceptance:true,assets_authorized:!!current.savedAssetsVersion,signing_version:current.savedAssetsVersion||null,reviewed_hash:pdfHash},p_id:current.id,p_details:{...current.values,MCNDA_TEMPLATE_VERSION:MCNDA_VERSION,B_STAMP_PATH:savedStampPath||'',B_PROFILE_ID:current.profileId},p_expected_version:current.profileVersion,p_note:'Completed and electronically signed via the VIP Capital portal. Awaiting explicit VIP Capital countersignature. Template '+MCNDA_VERSION+'. Reference: '+current.id+'. Account: '+member.email+'. Submitted: '+current.now.toISOString()+'. Company stamp: '+(current.hasStamp?'included':'not supplied')+'. '+(isIndividual(current.values)?'Individual signed in a personal capacity and confirmed agreement.':'Representative confirmed authority and agreement.')+(current.savedAssetsVersion?' Saved signing images explicitly authorized for this MCNDA. Signing profile version: '+current.savedAssetsVersion+'.':'')});
     check(result);
   } catch(error){
     await db.storage.from('vip-client-uploads').remove([path]);
