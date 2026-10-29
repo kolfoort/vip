@@ -1,5 +1,5 @@
 import {individualFields,isIndividual,individualParty,mountIdentity} from './individual-profile.js?v=20261028-vip-alignment';
-import {mountLanguagePreference} from './portal-language.js?v=20261028-auth-flags';
+import {mountLanguagePreference} from './portal-language.js?v=20261029-mfa1';
 import {mountCounterpartyRole} from './counterparty-role.js?v=20261028-vip-alignment';
 import {initSigningImages} from './signing-images.js?v=20261028-vip-alignment';
 export const companyFields=[['B_COMPANY','Legal company name',100,true],['B_REGISTRATION','Company registration number',60,true],['B_ADDRESS','Registered address',150,true],['B_COUNTRY','Country of incorporation',60,true],['B_REPRESENTATIVE','Authorized representative',80,true],['B_TITLE','Position / title',80,true],['B_PHONE','Telephone',50,true],['B_EMAIL','Business email',100,true],['B_WEBSITE','Website',100,false]];

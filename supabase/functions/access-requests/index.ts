@@ -70,6 +70,7 @@ Deno.serve(async req=>{
  if(!['approve','decline'].includes(body.action)||!uuid(body.id))return response(400,'Invalid action');
  const jwt=req.headers.get('x-portal-authorization')?.replace(/^Bearer /i,'');if(!jwt)return response(401,'Sign in required');
  const {data:{user},error:userError}=await db.auth.getUser(jwt);if(userError||!user)return response(401,'Sign in required');
+ const sessionDb=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_ANON_KEY')!,{global:{headers:{Authorization:'Bearer '+jwt}},auth:{persistSession:false}});const security=await sessionDb.rpc('my_portal_security');if(security.error||!security.data?.active||!security.data?.allowed)return response(403,'MFA_REQUIRED');
  const {data:member}=await db.from('portal_members').select('active,is_admin').eq('user_id',user.id).maybeSingle();if(!member?.active||!member.is_admin)return response(403,'Administrator required');
  const {data:claimed,error:claimError}=await db.rpc('review_access_request',{p_id:body.id,p_admin:user.id,p_action:body.action});
  if(claimError)return response(500,'Unable to update request');if(!claimed?.length)return response(409,'This request has changed. Refresh the request list.');

@@ -1,5 +1,5 @@
 import {mountIdentity} from './individual-profile.js?v=20261028-vip-alignment';
-import {languageSelect,setLanguage} from './portal-language.js?v=20261028-auth-flags';
+import {languageSelect,setLanguage} from './portal-language.js?v=20261029-mfa1';
 import {config} from './portal-config.js';
 const fields=['B_COMPANY','B_REGISTRATION','B_ADDRESS','B_COUNTRY','B_REPRESENTATIVE','B_TITLE','B_PHONE','B_EMAIL','B_WEBSITE'];
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};

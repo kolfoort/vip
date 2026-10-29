@@ -19,6 +19,7 @@ Deno.serve(async req=>{
  if(req.method!=='POST')return response(405,{error:'POST required'});
  const jwt=req.headers.get('x-portal-authorization')?.replace(/^Bearer /i,'');if(!jwt)return response(401,{error:'Sign in required'});
  const {data:{user},error:authError}=await db.auth.getUser(jwt);if(authError||!user)return response(401,{error:'Sign in required'});
+ const sessionDb=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_ANON_KEY')!,{global:{headers:{Authorization:'Bearer '+jwt}},auth:{persistSession:false}});const security=await sessionDb.rpc('my_portal_security');if(security.error||!security.data?.active||!security.data?.allowed)return response(403,{error:'MFA_REQUIRED'});
  let b;try{const raw=await req.text();if(raw.length>1500)return response(413,{error:'Too large'});b=JSON.parse(raw)}catch{return response(400,{error:'Invalid request'})}
  if(!['mcnda_client','mcnda_admin','commission_client','commission_admin','spa_client','spa_admin','jv_client','jv_admin','fco_client','fco_admin'].includes(b?.purpose)||typeof b.document_id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(b.document_id)||typeof b.document_hash!=='string'||!/^[0-9a-f]{64}$/.test(b.document_hash))return response(400,{error:'Invalid document'});
  const password=Deno.env.get('VIP_SMTP_PASSWORD');if(!password)return response(503,{error:'Mail unavailable'});

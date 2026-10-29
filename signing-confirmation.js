@@ -1,5 +1,5 @@
 import {config} from './portal-config.js?v=20261029-all-signatures2';
-import {getLanguage} from './portal-language.js?v=20261028-auth-flags';
+import {getLanguage} from './portal-language.js?v=20261029-mfa1';
 
 const copy={
  en:['Confirm your MCNDA signature','Send a one-time code to your registered email address. The code confirms only the exact document you have reviewed.','Send confirmation code','Confirmation code','Confirm and continue','Cancel','The code has been sent. It is valid for 10 minutes.','The code is incorrect, expired or already used. Request a new code if needed.','Wait at least one minute between requests. A maximum of five codes per document per hour is allowed.','Unable to send the code. Please try again later.','Send a new code','Document reference','This email confirmation is not a qualified electronic signature.'],

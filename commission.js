@@ -1,5 +1,6 @@
+import {ensurePortalSecurity} from './portal-security.js?v=20261029-mfa1';
 import {confirmAgreement,hashPDF} from './signing-confirmation.js?v=20261029-all-signatures2';
-import {initializeAccountLanguage} from './portal-language.js?v=20261028-auth-flags';
+import {initializeAccountLanguage} from './portal-language.js?v=20261029-mfa1';
 import {initSigningImages} from './signing-images.js?v=20261029-all-signatures2';
 import {createCommissionPDF} from "./commission-pdf.js?v=20261029-all-signatures2";
 import {config} from "./portal-config.js";
@@ -48,7 +49,7 @@ $('#new').onclick=()=>{current=null;$('#detail').innerHTML=`<h2>Create commissio
 $('#close-preview').onclick=()=>{$('#preview').hidden=true;$('#pdf').src='about:blank';if(pdfUrl){URL.revokeObjectURL(pdfUrl);pdfUrl=null}};
 async function init(){
  const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.102.0');
- db=createClient(config.url,config.publishableKey,{auth:{storage:sessionStorage,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ db=createClient(config.url,config.publishableKey,{auth:{storage:sessionStorage,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});if(!await ensurePortalSecurity(db))return;
  const {session}=checked(await db.auth.getSession());if(!session){location.replace('client-login.html');return}
  const member=checked(await db.from('portal_members').select('user_id,email,is_admin,active').eq('user_id',session.user.id).single());
  if(!member.active||!checked(await db.rpc('my_portal_access_allowed')))throw Error('Your portal access is not active. Contact info@vipcapital.eu.');

@@ -1,4 +1,5 @@
-import {initializeAccountLanguage,setLanguage} from './portal-language.js?v=20261028-auth-flags';
+import {ensurePortalSecurity} from './portal-security.js?v=20261029-mfa1';
+import {initializeAccountLanguage,setLanguage} from './portal-language.js?v=20261029-mfa1';
 import {prepareDocumentPreview,setDocumentAccess} from './document-sharing.js?v=20261028-vip-alignment';
 import {pdfBadge,previewButton,closePdfPreview} from './pdf-preview.js?v=20261028-vip-alignment';
 import {loadAssignedDocuments} from './shared-documents.js?v=20261028-vip-alignment';
@@ -259,12 +260,14 @@ async function start() {
   const {session}=check(await db.auth.getSession());
   if(['en','nl','de','es','ar'].includes(session?.user?.user_metadata?.language))setLanguage(session.user.user_metadata.language);
   if($('logout')) $('logout').addEventListener('click',()=>action($('logout'),async()=>{check(await db.auth.signOut());location.replace('client-login.html');}));
+  if(!['login','recovery','password'].includes(page)&&!await ensurePortalSecurity(db))return;
   if(page==='login') {
     $('login-form').hidden=false;
-    if(session) { location.replace('admin-home.html'); return; }
+    if(session) { if(!await ensurePortalSecurity(db))return;location.replace('admin-home.html'); return; }
     $('login-form').addEventListener('submit',event=>{event.preventDefault();action($('login-button'),async()=>{
       const result=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
       if(result.error){message('Sign-in unsuccessful. Check your email and password, or contact VIP Capital.');return;}
+      if(!await ensurePortalSecurity(db))return;
       location.replace('admin-home.html');
     });});
   } else if(page==='recovery') {
@@ -281,6 +284,7 @@ async function start() {
     if(!session) {message('This invitation or reset link is invalid or has expired. Please contact VIP Capital for a new link.');return;}
     // Remove credentials from the address bar after Supabase has processed the link.
     history.replaceState(null,'',location.pathname);
+    if(!await ensurePortalSecurity(db))return;
     $('password-form').hidden=false;
     $('password-form').addEventListener('submit',event=>{event.preventDefault();action($('save-password'),async()=>{
       if($('password').value!==$('confirm').value){message('The passwords do not match.');return;}
