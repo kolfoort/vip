@@ -1,0 +1,1 @@
+const lang=localStorage.getItem('staff-language')||'de';document.documentElement.lang=lang;document.title=lang==='de'?'Personal & Zeit | Landgasthof Koninghoek':'Personeel & tijd | Landgasthof Koninghoek';await import(lang==='nl'?'./app.nl.js?v=20261031-1':'./app.de.js?v=20261031-1');
