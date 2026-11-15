@@ -50,12 +50,17 @@ Deno.serve(async request => {
   if(!result.ok)return reply({status:'unavailable'});
   const info = await result.json();
   if(typeof info.valid!=='boolean' || (info.userError && !['VALID','INVALID'].includes(info.userError)))return reply({status:'unavailable'});
-  return reply({
+  const check = {
    status:info.valid?'valid':'invalid',
    checkedAt:new Date().toISOString(),
    name:typeof info.name==='string' && info.name.trim()!=='---' ? info.name.trim() : '',
    requestIdentifier:typeof info.requestIdentifier==='string' ? info.requestIdentifier : ''
-  });
+  };
+  const {error} = await db.from('admin_billing_vies_checks').upsert({
+   owner:user.id, vat, requester_vat:requesterVat, status:check.status,
+   checked_at:check.checkedAt, name:check.name, request_identifier:check.requestIdentifier
+  },{onConflict:'owner,vat,requester_vat'});
+  return reply({...check,saved:!error});
  } catch {
   return reply({status:'unavailable'});
  }

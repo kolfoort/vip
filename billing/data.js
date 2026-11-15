@@ -12,6 +12,13 @@ export const Billing={
  async checkVat(vat,requesterVat){
   return checked(await db.functions.invoke('billing-vies',{body:{vat,requesterVat}}));
  },
+ async viesChecks(requesterVat,vats){
+  if(!requesterVat || !vats.length)return [];
+  const {data,error}=await db.from('admin_billing_vies_checks')
+   .select('vat,status,checked_at,name,request_identifier').eq('requester_vat',requesterVat).in('vat',vats);
+  if(error)return [];
+  return data.map(({checked_at,request_identifier,...row})=>({...row,checkedAt:checked_at,requestIdentifier:request_identifier}));
+ },
  async state(){raw=checked(await db.rpc('billing_state'));revision=raw.revision;
   const projects=raw.projects.map(p=>({...p,client_name:raw.clients.find(c=>c.id===p.client_id)?.name||''}));
   const entries=raw.entries.map(e=>{const p=projects.find(p=>p.id===e.project_id),i=raw.invoices.find(i=>i.id===e.invoice_id);return {...e,project_name:p?.name||'',client_id:p?.client_id,client_name:p?.client_name||'',invoice_number:i?.number,invoice_status:i?.status}}).sort((a,b)=>b.work_date.localeCompare(a.work_date)||b.id-a.id);

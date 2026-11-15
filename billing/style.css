@@ -7,3 +7,6 @@
 .selection-item input.line-description{width:100%;margin:0 0 5px;flex:1;background:white;border-color:#e3e8eb;font-size:11px;padding:7px 8px}.selection-item>span{min-width:0}
 
 .live-pill{background:#e8f2ee;color:#3c7964}.workspace-back{display:block;margin:-5px 10px 22px;font-size:11px;text-decoration:none;color:#bba575}.export-links button{padding:0}.status.credited{background:#f4e9e7;color:#9c655b}.status.pending_pdf{background:#fff2d9;color:#9b7a35}@media(max-width:760px){.workspace-back{margin:0 0 10px}.notice span:not(.notice-dot){font-size:10px}}
+
+.vies-valid{color:#237546;font-weight:700}
+.vies-invalid{color:#a13232;font-weight:700}
