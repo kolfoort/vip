@@ -23,7 +23,8 @@ export async function createInvoicePDF(inv){
  const numberLabel={nl:'Factuurnummer',en:'Invoice number',de:'Rechnungsnummer'}[lang];
  draw(43,652,isCredit?t.credit:t.title,25);draw(43,628,numberLabel+': '+inv.number+(inv.status==='draft'?' | '+t.draft:''),9,bold,gold);page.drawLine({start:{x:43,y:611},end:{x:552,y:611},thickness:.75,color:gold});draw(43,39,inv.number+(inv.status==='draft'?' | '+t.draft:''),7,font,grey);right(39,t.page+' '+pageNo,7);y=588;}
  newPage();draw(43,y,t.bill_to,9,bold,gold);y-=18;let ly=y;
- for(const item of [s.client.name,addressWithCountry(s.client.address,s.client.country),s.client.vat?t.vat_id+': '+s.client.vat:''])if(item)for(const l of lines(item,250)){draw(43,ly,l);ly-=13}
+ if(s.client.name)for(const line of lines(s.client.name,250,9,bold)){draw(43,ly,line,9,bold);ly-=13}
+ for(const item of [addressWithCountry(s.client.address,s.client.country),s.client.vat?t.vat_id+': '+s.client.vat:''])if(item)for(const l of lines(item,250)){draw(43,ly,l);ly-=13}
  function metadataColumn(x,width,fields){
   let yy=y;
   for(const [label,value] of fields){
@@ -99,22 +100,58 @@ export async function createInvoicePDF(inv){
  const notes=[];if(isCredit)notes.push(t.credit_ref+' '+s.original_number);if(s.tax_mode==='reverse')notes.push(t.reverse);if(s.tax_mode==='exempt')notes.push(t.exempt+': '+s.tax_note);else if(s.tax_note)notes.push(s.tax_note);if(s.currency==='USD'&&s.vat_cents)notes.push(t.vat_eur+': '+amount(s.vat_eur_cents)+' | 1 USD = '+s.fx_rate+' EUR | '+s.fx_source);const bank=s.currency==='EUR'?issuer.eur_bank:issuer.usd_bank;
  const accountLabel={nl:'Rekeninghouder',en:'Account holder',de:'Kontoinhaber'}[lang];
  const paymentDetails=String(bank??'').replace(/^Rekeninghouder(?=\s*:)/m,accountLabel);
- const paymentReference={
-  nl:'Betaal op onderstaande rekening onder vermelding van factuurnummer '+inv.number+'.',
-  en:'Please pay to the account below using invoice number '+inv.number+' as the payment reference.',
-  de:'Bitte überweisen Sie den Rechnungsbetrag auf das unten angegebene Konto. Verwendungszweck: '+inv.number+'.'
+ const paymentMessage={
+  nl:'Maak het factuurbedrag over naar de onderstaande rekening.',
+  en:'Please transfer the invoice amount to the account below.',
+  de:'Bitte überweisen Sie den Rechnungsbetrag auf das unten angegebene Konto.'
  }[lang];
- const paymentNote=isCredit||!paymentDetails?'':t.payment+'\n'+paymentReference+'\n'+paymentDetails;
- notes.push(paymentNote,s.note);
- for(const note of notes){if(!note)continue;for(const l of lines(note,507,8)){if(y<75)newPage();draw(43,y,l,8);y-=12}y-=7;}
- const footer=issuer.footer==='Dank voor uw vertrouwen.'?t.thanks:issuer.footer;
- if(footer){
-  const boldItalic=await pdf.embedFont(StandardFonts.HelveticaBoldOblique);
-  for(const line of lines(footer,507,8,boldItalic)){
+ const paymentLabel={nl:'Betalingskenmerk',en:'Payment reference',de:'Verwendungszweck'}[lang];
+ const boldItalic=await pdf.embedFont(StandardFonts.HelveticaBoldOblique);
+ function writeNote(note,face=font){
+  if(!note)return;
+  for(const line of lines(note,507,8,face)){
    if(y<75)newPage();
-   draw(43,y,line,8,boldItalic);
+   draw(43,y,line,8,face);
    y-=12;
   }
  }
+ for(const note of notes){writeNote(note);if(note)y-=7;}
+ if(!isCredit&&paymentDetails){
+  writeNote(t.payment,bold);
+  writeNote(paymentMessage);
+  for(const detail of paymentDetails.split('\n')){
+   const separator=detail.indexOf(':');
+   if(separator<0||font.widthOfTextAtSize(norm(detail.slice(0,separator)),8)>74){writeNote(detail);continue;}
+   const label=detail.slice(0,separator);
+   const value=detail.slice(separator+1).trim();
+   for(const [index,line] of lines(value,429,8,font).entries()){
+    if(y<75)newPage();
+    if(index===0)draw(43,y,label,8);
+    draw(123,y,line,8);
+    y-=12;
+   }
+  }
+  if(y<75)newPage();
+  draw(43,y,paymentLabel,8,boldItalic);
+  draw(123,y,inv.number,8,boldItalic);
+  y-=19;
+ }
+ writeNote(s.note);
+ if(s.note)y-=7;
+ const footer=issuer.footer==='Dank voor uw vertrouwen.'?t.thanks:issuer.footer;
+ if(footer===t.thanks){
+  y-=15;
+  if(y<75)newPage();
+  try{
+   const response=await fetch(new URL('./invoice-thanks-'+lang+'.png',import.meta.url));
+   if(!response.ok)throw Error('Invoice closing graphic unavailable');
+   const script=await pdf.embedPng(await response.arrayBuffer());
+   const height=14,width=height*script.width/script.height;
+   page.drawText(norm(footer),{x:43,y,size:8,font:boldItalic,opacity:0});
+   page.drawImage(script,{x:43,y:y-3,width,height});
+  }catch{
+   writeNote(footer,boldItalic);
+  }
+ }else writeNote(footer,boldItalic);
  const stamp=new Date(inv.reserved_at||inv.created_at);pdf.setCreationDate(stamp);pdf.setModificationDate(stamp);pdf.setTitle((isCredit?t.credit:t.title)+' '+inv.number);pdf.setAuthor(issuer.name);return pdf.save();
 }
