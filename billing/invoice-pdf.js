@@ -5,6 +5,12 @@ en:{title:'INVOICE',credit:'CREDIT NOTE',draft:'DRAFT',page:'Page',bill_to:'BILL
 de:{title:'RECHNUNG',credit:'STORNORECHNUNG',draft:'ENTWURF',page:'Seite',bill_to:'RECHNUNGSEMPFÄNGER',registration:'Handelsregister NL',vat_id:'USt-IdNr.',invoice_date:'Rechnungsdatum',due_date:'Fälligkeitsdatum',currency:'Währung',reference:'Referenz',services:'Leistungsdatum / Beschreibung',hours:'Stunden',rate:'Stundensatz',amount:'Betrag',next_day:'+1 Tag',break:'Pause',subtotal:'Zwischensumme',vat:'USt.',total:'Gesamt',reverse:'Steuerschuldnerschaft des Leistungsempfängers (Reverse Charge).',reverse_label:'USt. (Reverse Charge)',exempt:'USt. befreit',vat_eur:'Umsatzsteuerbetrag in EUR',payment:'Zahlungsinformationen',thanks:'Vielen Dank für Ihr Vertrauen.',credit_ref:'Vollständige Stornorechnung zu Rechnung'}
 };
 const norm=s=>String(s??'').replace(/[\u2011\u2013\u2014]/g,'-').replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"').replace(/[^\x20-\x7e\xa0-\xff\n]/g,'?');
+function addressWithCountry(address,country){
+ const parts=String(address??'').trimEnd().split(/\r?\n/);
+ const countryName=String(country??'').trim();
+ if(countryName && parts.at(-1)?.trim().toLowerCase()!==countryName.toLowerCase())parts.push(countryName);
+ return parts.filter(part=>part.trim()).join('\n');
+}
 export async function createInvoicePDF(inv){
  const s=inv.snapshot,issuer=s.issuer,lang=s.language||'nl',t=dictionary[lang],locale={nl:'nl-NL',en:'en-GB',de:'de-DE'}[lang],pdf=await PDFDocument.create(),font=await pdf.embedFont(StandardFonts.Helvetica),bold=await pdf.embedFont(StandardFonts.HelveticaBold),logo=await pdf.embedPng(await(await fetch(new URL('./lce-logo.png',import.meta.url))).arrayBuffer());let page,y,pageNo=0;
  const navy=rgb(.0,.125,.25),gold=rgb(.68,.55,.31),grey=rgb(.45,.49,.52),white=rgb(1,1,1),amount=n=>new Intl.NumberFormat(locale,{minimumFractionDigits:2,maximumFractionDigits:2}).format(n/100),hours=n=>new Intl.NumberFormat(locale,{minimumFractionDigits:2,maximumFractionDigits:2}).format(n/60),date=v=>new Date(v+'T12:00:00Z').toLocaleDateString(locale,{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'UTC'}),isCredit=inv.doc_type==='credit';
@@ -12,12 +18,12 @@ export async function createInvoicePDF(inv){
  function lines(txt,width=507,size=9,f=font){let out=[];for(const para of norm(txt).split('\n')){let line='';for(const word of para.split(/\s+/)){if(f.widthOfTextAtSize(line+(line?' ':'')+word,size)>width&&line){out.push(line);line=''}for(const char of word){if(f.widthOfTextAtSize(line+char,size)>width){out.push(line);line=''}line+=char}line+=' '}out.push(line.trim())}return out}
  function right(yy,txt,size=9,f=font){const v=norm(txt);draw(552-f.widthOfTextAtSize(v,size),yy,v,size,f)}
  function newPage(){page=pdf.addPage([595,842]);pageNo++;page.drawImage(logo,{x:43,y:687,width:142,height:142});let yy=801;right(yy,issuer.name.toUpperCase(),9,bold);yy-=15;
- for(const item of [issuer.address,issuer.country])for(const l of lines(item,230,9)){right(yy,l);yy-=12}yy-=8;
+ for(const l of lines(addressWithCountry(issuer.address,issuer.country),230,9)){right(yy,l);yy-=12}yy-=8;
  for(const item of [issuer.website,issuer.email,issuer.phone])if(item){for(const l of lines(item,230,9)){right(yy,l);yy-=12}}yy-=8;right(yy,t.registration+': '+issuer.kvk);yy-=12;right(yy,t.vat_id+': '+issuer.vat);
  const numberLabel={nl:'Factuurnummer',en:'Invoice number',de:'Rechnungsnummer'}[lang];
  draw(43,652,isCredit?t.credit:t.title,25);draw(43,628,numberLabel+': '+inv.number+(inv.status==='draft'?' | '+t.draft:''),9,bold,gold);page.drawLine({start:{x:43,y:611},end:{x:552,y:611},thickness:.75,color:gold});draw(43,39,inv.number+' | '+(inv.status==='draft'?t.draft:issuer.name),7,font,grey);right(39,t.page+' '+pageNo,7);const foot=[issuer.name,issuer.website,issuer.email].filter(Boolean).join(' | ');draw(Math.max(43,(595-font.widthOfTextAtSize(norm(foot),7))/2),24,foot,7);y=588;}
  newPage();draw(43,y,t.bill_to,9,bold,gold);y-=18;let ly=y,ry=y;
- for(const item of [s.client.name,s.client.address,s.client.country,s.client.vat?t.vat_id+': '+s.client.vat:''])if(item)for(const l of lines(item,250)){draw(43,ly,l);ly-=13}
+ for(const item of [s.client.name,addressWithCountry(s.client.address,s.client.country),s.client.vat?t.vat_id+': '+s.client.vat:''])if(item)for(const l of lines(item,250)){draw(43,ly,l);ly-=13}
  for(const [label,val] of [[t.invoice_date,date(s.issue_date)],[t.due_date,date(s.due_date)],[t.currency,s.currency],[t.reference,s.reference||'-']]){draw(325,ry,label,8,bold);ry-=13;for(const l of lines(val,227,8)){draw(325,ry,l,8);ry-=12}ry-=3}y=Math.min(ly,ry)-20;
  function columnRight(x,yy,text,f=font,color=navy){
   draw(x-f.widthOfTextAtSize(norm(text),8),yy,text,8,f,color);
