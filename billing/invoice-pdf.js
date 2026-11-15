@@ -20,8 +20,37 @@ export async function createInvoicePDF(inv){
  for(const item of [s.client.name,s.client.address,s.client.country,s.client.vat?t.vat_id+': '+s.client.vat:''])if(item)for(const l of lines(item,250)){draw(43,ly,l);ly-=13}
  for(const [label,val] of [[t.invoice_date,date(s.issue_date)],[t.due_date,date(s.due_date)],[t.currency,s.currency],[t.reference,s.reference||'-']]){draw(325,ry,label,8,bold);ry-=13;for(const l of lines(val,227,8)){draw(325,ry,l,8);ry-=12}ry-=3}y=Math.min(ly,ry)-33;
  function tableHead(){if(y<105)newPage();page.drawRectangle({x:43,y:y-8,width:509,height:25,color:navy});for(const [x,txt] of [[49,t.services],[335,t.hours],[395,t.rate],[477,t.amount]])draw(x,y,txt,8,bold,white);y-=30}
- tableHead();for(const r of s.lines){if(y<140){newPage();tableHead()}draw(49,y,date(r.work_date),8,bold);draw(335,y,hours(r.minutes),8);draw(395,y,amount(r.rate_cents),8);draw(477,y,amount(r.total_cents),8);y-=13;const text=[];
- if(r.start_time)text.push([r.start_time+' - '+r.end_time+(r.next_day?' ('+t.next_day+')':'')+' | '+t.break+' '+(r.break_minutes||0)+' min',font]);text.push([r.project_name,bold],[r.description,font]);for(const [txt,f] of text)for(const l of lines(txt,275,8,f)){if(y<85){newPage();tableHead()}draw(49,y,l,8,f);y-=12}page.drawLine({start:{x:43,y},end:{x:552,y},thickness:.5,color:rgb(.88,.9,.92)});y-=17;}
+ const rowBlue=rgb(.91,.95,.98);
+ tableHead();
+ for(const [index,r] of s.lines.entries()){
+  const fields=[];
+  if(r.start_time)fields.push([r.start_time+' - '+r.end_time+(r.next_day?' ('+t.next_day+')':'')+' | '+t.break+' '+(r.break_minutes||0)+' min',font]);
+  fields.push([r.project_name,bold],[r.description,font]);
+  const details=fields.flatMap(([txt,f])=>lines(txt,275,8,f).map(line=>[line,f]));
+  const rowBottom=70, maxPageRow=558-rowBottom;
+  const height=30+12*details.length;
+  if(y-height<rowBottom && (height<=maxPageRow || y<140)){newPage();tableHead()}
+  const fill=index%2===0?rowBlue:white;
+  let offset=0,first=true;
+  do {
+   const capacity=Math.max(0,Math.floor((y-rowBottom-30)/12));
+   const chunk=details.slice(offset,offset+capacity);
+   const step=30+12*chunk.length;
+   page.drawRectangle({x:43,y:y+8-step,width:509,height:step,color:fill});
+   draw(49,y,date(r.work_date),8,bold);
+   if(first){
+    draw(335,y,hours(r.minutes),8);
+    draw(395,y,amount(r.rate_cents),8);
+    draw(477,y,amount(r.total_cents),8);
+   }
+   chunk.forEach(([line,f],i)=>draw(49,y-13-i*12,line,8,f));
+   y-=step;
+   offset+=chunk.length;
+   first=false;
+   if(offset<details.length){newPage();tableHead()}
+  } while(offset<details.length);
+ }
+ y-=12;
  if(y<235)newPage();
  const taxLabel=s.tax_mode==='reverse'?t.reverse_label:s.tax_mode==='exempt'?t.exempt:t.vat+' '+s.tax_rate+'%';
  const totals=[[t.subtotal,s.subtotal_cents],[taxLabel,s.vat_cents],[t.total+' '+s.currency,s.total_cents]];
