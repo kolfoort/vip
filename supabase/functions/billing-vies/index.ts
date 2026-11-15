@@ -43,13 +43,13 @@ Deno.serve(async request => {
  const requesterMemberStateCode = requesterVat.slice(0,2), requesterNumber = requesterVat.slice(2);
  if(!countries.has(requesterMemberStateCode) || !/^[A-Z0-9]{2,12}$/.test(requesterNumber))return reply({status:'invalid_requester'});
  try {
-  const result = await fetch('https://ec.europa.eu/taxation_customs/vies/rest-api/check-vat',{
+  const result = await fetch('https://ec.europa.eu/taxation_customs/vies/rest-api/check-vat-number',{
    method:'POST', headers:{'Content-Type':'application/json'},
    body:JSON.stringify({countryCode,vatNumber,requesterMemberStateCode,requesterNumber}), signal:AbortSignal.timeout(10000)
   });
   if(!result.ok)return reply({status:'unavailable'});
   const info = await result.json();
-  if(typeof info.valid!=='boolean' || (info.userError && !['VALID','INVALID'].includes(info.userError)))return reply({status:'unavailable'});
+  if(typeof info.valid!=='boolean' || (Array.isArray(info.errorWrappers) && info.errorWrappers.length>0) || (info.userError && !['VALID','INVALID'].includes(info.userError)))return reply({status:'unavailable'});
   const check = {
    status:info.valid?'valid':'invalid',
    checkedAt:new Date().toISOString(),
