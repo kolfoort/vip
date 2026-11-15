@@ -146,9 +146,9 @@ export async function createInvoicePDF(inv){
    const response=await fetch(new URL('./invoice-thanks-'+lang+'.png?v=20261115-signature-style',import.meta.url));
    if(!response.ok)throw Error('Invoice closing graphic unavailable');
    const script=await pdf.embedPng(await response.arrayBuffer());
-   const height=14,width=height*script.width/script.height;
+   const height=32,width=height*script.width/script.height;
    page.drawText(norm(footer),{x:43,y,size:8,font:boldItalic,opacity:0});
-   page.drawImage(script,{x:43,y:y-3,width,height});
+   page.drawImage(script,{x:43,y:y-12,width,height});
   }catch{
    writeNote(footer,boldItalic);
   }
