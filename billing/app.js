@@ -1,4 +1,4 @@
-import {Billing} from './data.js?v=20261115-invoice-totals';
+import {Billing} from './data.js?v=20261115-payment-reference';
 const languages={nl:'Nederlands',en:'Engels',de:'Duits'};
 let S,view=['dashboard','hours','clients','invoices','settings'].includes(location.hash.slice(1))?location.hash.slice(1):'dashboard',toastTimer;const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),h=n=>(n/60).toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2}),m=(n,c='EUR')=>new Intl.NumberFormat('nl-NL',{style:'currency',currency:c}).format(n/100),datum=s=>new Date(s+'T12:00:00').toLocaleDateString('nl-NL',{day:'2-digit',month:'short',year:'numeric'}),total=e=>Math.floor((e.minutes*e.rate_cents+30)/60),sum=a=>a.reduce((n,e)=>n+total(e),0);
 const statusLabel={draft:'Concept',pending_pdf:'PDF afronden',issued:'Uitgereikt',paid:'Betaald',credited:'Gecrediteerd'};

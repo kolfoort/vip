@@ -14,7 +14,8 @@ export async function createInvoicePDF(inv){
  function newPage(){page=pdf.addPage([595,842]);pageNo++;page.drawImage(logo,{x:43,y:687,width:142,height:142});let yy=801;right(yy,issuer.name.toUpperCase(),9,bold);yy-=15;
  for(const item of [issuer.address,issuer.country])for(const l of lines(item,230,9)){right(yy,l);yy-=12}yy-=8;
  for(const item of [issuer.website,issuer.email,issuer.phone])if(item){for(const l of lines(item,230,9)){right(yy,l);yy-=12}}yy-=8;right(yy,t.registration+': '+issuer.kvk);yy-=12;right(yy,t.vat_id+': '+issuer.vat);
- draw(43,652,isCredit?t.credit:t.title,25);draw(43,628,inv.number+(inv.status==='draft'?' | '+t.draft:''),9,bold,gold);page.drawLine({start:{x:43,y:611},end:{x:552,y:611},thickness:.75,color:gold});draw(43,39,inv.number+' | '+(inv.status==='draft'?t.draft:issuer.name),7,font,grey);right(39,t.page+' '+pageNo,7);const foot=[issuer.name,issuer.website,issuer.email].filter(Boolean).join(' | ');draw(Math.max(43,(595-font.widthOfTextAtSize(norm(foot),7))/2),24,foot,7);y=588;}
+ const numberLabel={nl:'Factuurnummer',en:'Invoice number',de:'Rechnungsnummer'}[lang];
+ draw(43,652,isCredit?t.credit:t.title,25);draw(43,628,numberLabel+': '+inv.number+(inv.status==='draft'?' | '+t.draft:''),9,bold,gold);page.drawLine({start:{x:43,y:611},end:{x:552,y:611},thickness:.75,color:gold});draw(43,39,inv.number+' | '+(inv.status==='draft'?t.draft:issuer.name),7,font,grey);right(39,t.page+' '+pageNo,7);const foot=[issuer.name,issuer.website,issuer.email].filter(Boolean).join(' | ');draw(Math.max(43,(595-font.widthOfTextAtSize(norm(foot),7))/2),24,foot,7);y=588;}
  newPage();draw(43,y,t.bill_to,9,bold,gold);y-=18;let ly=y,ry=y;
  for(const item of [s.client.name,s.client.address,s.client.country,s.client.vat?t.vat_id+': '+s.client.vat:''])if(item)for(const l of lines(item,250)){draw(43,ly,l);ly-=13}
  for(const [label,val] of [[t.invoice_date,date(s.issue_date)],[t.due_date,date(s.due_date)],[t.currency,s.currency],[t.reference,s.reference||'-']]){draw(325,ry,label,8,bold);ry-=13;for(const l of lines(val,227,8)){draw(325,ry,l,8);ry-=12}ry-=3}y=Math.min(ly,ry)-33;
@@ -37,7 +38,13 @@ export async function createInvoicePDF(inv){
  const notes=[];if(isCredit)notes.push(t.credit_ref+' '+s.original_number);if(s.tax_mode==='reverse')notes.push(t.reverse);if(s.tax_mode==='exempt')notes.push(t.exempt+': '+s.tax_note);else if(s.tax_note)notes.push(s.tax_note);if(s.currency==='USD'&&s.vat_cents)notes.push(t.vat_eur+': '+amount(s.vat_eur_cents)+' | 1 USD = '+s.fx_rate+' EUR | '+s.fx_source);const bank=s.currency==='EUR'?issuer.eur_bank:issuer.usd_bank;
  const accountLabel={nl:'Rekeninghouder',en:'Account holder',de:'Kontoinhaber'}[lang];
  const paymentDetails=String(bank??'').replace(/^Rekeninghouder(?=\s*:)/m,accountLabel);
- notes.push(paymentDetails?t.payment+'\n'+paymentDetails:'',s.note,issuer.footer==='Dank voor uw vertrouwen.'?t.thanks:issuer.footer);
+ const paymentReference={
+  nl:'Betaal op onderstaande rekening onder vermelding van factuurnummer '+inv.number+'.',
+  en:'Please pay to the account below using invoice number '+inv.number+' as the payment reference.',
+  de:'Bitte überweisen Sie den Rechnungsbetrag auf das unten angegebene Konto. Verwendungszweck: '+inv.number+'.'
+ }[lang];
+ const paymentNote=isCredit||!paymentDetails?'':t.payment+'\n'+paymentReference+'\n'+paymentDetails;
+ notes.push(paymentNote,s.note,issuer.footer==='Dank voor uw vertrouwen.'?t.thanks:issuer.footer);
  for(const note of notes){if(!note)continue;for(const l of lines(note,507,8)){if(y<75)newPage();draw(43,y,l,8);y-=12}y-=7;}
  const stamp=new Date(inv.reserved_at||inv.created_at);pdf.setCreationDate(stamp);pdf.setModificationDate(stamp);pdf.setTitle((isCredit?t.credit:t.title)+' '+inv.number);pdf.setAuthor(issuer.name);return pdf.save();
 }
