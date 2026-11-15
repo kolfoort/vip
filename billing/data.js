@@ -1,5 +1,5 @@
 import {config} from '../portal-config.js';
-import {createInvoicePDF} from './invoice-pdf.js?v=20261115-invoice-rows';
+import {createInvoicePDF} from './invoice-pdf.js?v=20261115-compact-invoice';
 const checked=r=>{if(r.error)throw r.error;return r.data};let db,revision,raw,member;const urls=[];
 export const Billing={
  async init(){

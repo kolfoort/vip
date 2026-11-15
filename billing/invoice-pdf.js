@@ -18,40 +18,54 @@ export async function createInvoicePDF(inv){
  draw(43,652,isCredit?t.credit:t.title,25);draw(43,628,numberLabel+': '+inv.number+(inv.status==='draft'?' | '+t.draft:''),9,bold,gold);page.drawLine({start:{x:43,y:611},end:{x:552,y:611},thickness:.75,color:gold});draw(43,39,inv.number+' | '+(inv.status==='draft'?t.draft:issuer.name),7,font,grey);right(39,t.page+' '+pageNo,7);const foot=[issuer.name,issuer.website,issuer.email].filter(Boolean).join(' | ');draw(Math.max(43,(595-font.widthOfTextAtSize(norm(foot),7))/2),24,foot,7);y=588;}
  newPage();draw(43,y,t.bill_to,9,bold,gold);y-=18;let ly=y,ry=y;
  for(const item of [s.client.name,s.client.address,s.client.country,s.client.vat?t.vat_id+': '+s.client.vat:''])if(item)for(const l of lines(item,250)){draw(43,ly,l);ly-=13}
- for(const [label,val] of [[t.invoice_date,date(s.issue_date)],[t.due_date,date(s.due_date)],[t.currency,s.currency],[t.reference,s.reference||'-']]){draw(325,ry,label,8,bold);ry-=13;for(const l of lines(val,227,8)){draw(325,ry,l,8);ry-=12}ry-=3}y=Math.min(ly,ry)-33;
- function tableHead(){if(y<105)newPage();page.drawRectangle({x:43,y:y-8,width:509,height:25,color:navy});for(const [x,txt] of [[49,t.services],[335,t.hours],[395,t.rate],[477,t.amount]])draw(x,y,txt,8,bold,white);y-=30}
- const rowBlue=rgb(.91,.95,.98);
+ for(const [label,val] of [[t.invoice_date,date(s.issue_date)],[t.due_date,date(s.due_date)],[t.currency,s.currency],[t.reference,s.reference||'-']]){draw(325,ry,label,8,bold);ry-=13;for(const l of lines(val,227,8)){draw(325,ry,l,8);ry-=12}ry-=3}y=Math.min(ly,ry)-20;
+ function columnRight(x,yy,text,f=font,color=navy){
+  draw(x-f.widthOfTextAtSize(norm(text),8),yy,text,8,f,color);
+ }
+ function tableHead(){
+  if(y<125)newPage();
+  page.drawRectangle({x:43,y:y-8,width:509,height:22,color:navy});
+  draw(49,y,t.services,8,bold,white);
+  for(const [x,label] of [[369,t.hours],[452,t.rate],[541,t.amount]])columnRight(x,y,label,bold,white);
+  y-=23;
+ }
+ const rowBlue=rgb(.91,.95,.98), rowBottom=76, rowPadding=19, lineHeight=10;
  tableHead();
  for(const [index,r] of s.lines.entries()){
   const fields=[];
-  if(r.start_time)fields.push([r.start_time+' - '+r.end_time+(r.next_day?' ('+t.next_day+')':'')+' | '+t.break+' '+(r.break_minutes||0)+' min',font]);
-  fields.push([r.project_name,bold],[r.description,font]);
+  if(r.start_time)fields.push([r.start_time+' - '+r.end_time+(r.next_day?' ('+t.next_day+')':'')+(Number(r.break_minutes)?' | '+t.break+' '+r.break_minutes+' min':''),font]);
+  const project=r.project_name?.trim(),description=r.description?.trim();
+  if(lang==='de' && /^Bediening Koning(?:s)?hoek$/i.test(project||'') && /^Bediening$/i.test(description||'')){
+   fields.push(['Service im Landgasthof Koninghoek',bold]);
+  }else{
+   if(project)fields.push([project,bold]);
+   if(description && description!==project)fields.push([description,font]);
+  }
   const details=fields.flatMap(([txt,f])=>lines(txt,275,8,f).map(line=>[line,f]));
-  const rowBottom=70, maxPageRow=558-rowBottom;
-  const height=30+12*details.length;
-  if(y-height<rowBottom && (height<=maxPageRow || y<140)){newPage();tableHead()}
+  const height=rowPadding+lineHeight*details.length;
+  if(y-height<rowBottom && (height<=565-rowBottom || y<125)){newPage();tableHead()}
   const fill=index%2===0?rowBlue:white;
   let offset=0,first=true;
   do {
-   const capacity=Math.max(0,Math.floor((y-rowBottom-30)/12));
+   const capacity=Math.max(0,Math.floor((y-rowBottom-rowPadding)/lineHeight));
    const chunk=details.slice(offset,offset+capacity);
-   const step=30+12*chunk.length;
-   page.drawRectangle({x:43,y:y+8-step,width:509,height:step,color:fill});
-   draw(49,y,date(r.work_date),8,bold);
+   const step=rowPadding+lineHeight*chunk.length;
+   page.drawRectangle({x:43,y:y+7-step,width:509,height:step,color:fill});
+   draw(49,y-5,date(r.work_date),8,bold);
    if(first){
-    draw(335,y,hours(r.minutes),8);
-    draw(395,y,amount(r.rate_cents),8);
-    draw(477,y,amount(r.total_cents),8);
+    columnRight(369,y-5,hours(r.minutes));
+    columnRight(452,y-5,amount(r.rate_cents));
+    columnRight(541,y-5,amount(r.total_cents));
    }
-   chunk.forEach(([line,f],i)=>draw(49,y-13-i*12,line,8,f));
+   chunk.forEach(([line,f],i)=>draw(49,y-5-(i+1)*lineHeight,line,8,f));
    y-=step;
    offset+=chunk.length;
    first=false;
    if(offset<details.length){newPage();tableHead()}
   } while(offset<details.length);
  }
- y-=12;
- if(y<235)newPage();
+ y-=14;
+ if(y<160)newPage();
  const taxLabel=s.tax_mode==='reverse'?t.reverse_label:s.tax_mode==='exempt'?t.exempt:t.vat+' '+s.tax_rate+'%';
  const totals=[[t.subtotal,s.subtotal_cents],[taxLabel,s.vat_cents],[t.total+' '+s.currency,s.total_cents]];
  const rowFills=[rgb(.93,.95,.97),rgb(.98,.98,.99),navy];
