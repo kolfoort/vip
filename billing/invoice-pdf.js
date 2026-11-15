@@ -21,8 +21,23 @@ export async function createInvoicePDF(inv){
  function tableHead(){if(y<105)newPage();page.drawRectangle({x:43,y:y-8,width:509,height:25,color:navy});for(const [x,txt] of [[49,t.services],[335,t.hours],[395,t.rate],[477,t.amount]])draw(x,y,txt,8,bold,white);y-=30}
  tableHead();for(const r of s.lines){if(y<140){newPage();tableHead()}draw(49,y,date(r.work_date),8,bold);draw(335,y,hours(r.minutes),8);draw(395,y,amount(r.rate_cents),8);draw(477,y,amount(r.total_cents),8);y-=13;const text=[];
  if(r.start_time)text.push([r.start_time+' - '+r.end_time+(r.next_day?' ('+t.next_day+')':'')+' | '+t.break+' '+(r.break_minutes||0)+' min',font]);text.push([r.project_name,bold],[r.description,font]);for(const [txt,f] of text)for(const l of lines(txt,275,8,f)){if(y<85){newPage();tableHead()}draw(49,y,l,8,f);y-=12}page.drawLine({start:{x:43,y},end:{x:552,y},thickness:.5,color:rgb(.88,.9,.92)});y-=17;}
- if(y<235)newPage();const taxLabel=s.tax_mode==='reverse'?t.reverse_label:s.tax_mode==='exempt'?t.exempt:t.vat+' '+s.tax_rate+'%';for(const [label,val] of [[t.subtotal,s.subtotal_cents],[taxLabel,s.vat_cents],[t.total+' '+s.currency,s.total_cents]]){draw(345,y,label,9,bold);draw(477,y,amount(val),10,bold);y-=22}y-=8;
- const notes=[];if(isCredit)notes.push(t.credit_ref+' '+s.original_number);if(s.tax_mode==='reverse')notes.push(t.reverse);if(s.tax_mode==='exempt')notes.push(t.exempt+': '+s.tax_note);else if(s.tax_note)notes.push(s.tax_note);if(s.currency==='USD'&&s.vat_cents)notes.push(t.vat_eur+': '+amount(s.vat_eur_cents)+' | 1 USD = '+s.fx_rate+' EUR | '+s.fx_source);notes.push(t.payment+': '+(s.currency==='EUR'?issuer.eur_bank:issuer.usd_bank),s.note,issuer.footer==='Dank voor uw vertrouwen.'?t.thanks:issuer.footer);
+ if(y<235)newPage();
+ const taxLabel=s.tax_mode==='reverse'?t.reverse_label:s.tax_mode==='exempt'?t.exempt:t.vat+' '+s.tax_rate+'%';
+ const totals=[[t.subtotal,s.subtotal_cents],[taxLabel,s.vat_cents],[t.total+' '+s.currency,s.total_cents]];
+ const rowFills=[rgb(.93,.95,.97),rgb(.98,.98,.99),navy];
+ totals.forEach(([label,val],index)=>{
+  const color=index===2?white:navy;
+  const number=amount(val),size=index===2?11:10;
+  page.drawRectangle({x:311,y:y-8,width:241,height:22,color:rowFills[index]});
+  draw(322,y,label,9,bold,color);
+  draw(541-bold.widthOfTextAtSize(number,size),y,number,size,bold,color);
+  y-=22;
+ });
+ y-=10;
+ const notes=[];if(isCredit)notes.push(t.credit_ref+' '+s.original_number);if(s.tax_mode==='reverse')notes.push(t.reverse);if(s.tax_mode==='exempt')notes.push(t.exempt+': '+s.tax_note);else if(s.tax_note)notes.push(s.tax_note);if(s.currency==='USD'&&s.vat_cents)notes.push(t.vat_eur+': '+amount(s.vat_eur_cents)+' | 1 USD = '+s.fx_rate+' EUR | '+s.fx_source);const bank=s.currency==='EUR'?issuer.eur_bank:issuer.usd_bank;
+ const accountLabel={nl:'Rekeninghouder',en:'Account holder',de:'Kontoinhaber'}[lang];
+ const paymentDetails=String(bank??'').replace(/^Rekeninghouder(?=\s*:)/m,accountLabel);
+ notes.push(paymentDetails?t.payment+'\n'+paymentDetails:'',s.note,issuer.footer==='Dank voor uw vertrouwen.'?t.thanks:issuer.footer);
  for(const note of notes){if(!note)continue;for(const l of lines(note,507,8)){if(y<75)newPage();draw(43,y,l,8);y-=12}y-=7;}
  const stamp=new Date(inv.reserved_at||inv.created_at);pdf.setCreationDate(stamp);pdf.setModificationDate(stamp);pdf.setTitle((isCredit?t.credit:t.title)+' '+inv.number);pdf.setAuthor(issuer.name);return pdf.save();
 }
