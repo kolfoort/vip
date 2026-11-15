@@ -9,6 +9,9 @@ export const Billing={
   db.auth.onAuthStateChange(event=>{if(event==='SIGNED_OUT'){document.getElementById('billing-app').hidden=true;window.dispatchEvent(new Event('billing-signout'));raw=null;revision=null;location.replace('../client-login.html')}});
   document.getElementById('access-error').hidden=true;document.getElementById('billing-app').hidden=false;return true;
  },
+ async checkVat(vat,requesterVat){
+  return checked(await db.functions.invoke('billing-vies',{body:{vat,requesterVat}}));
+ },
  async state(){raw=checked(await db.rpc('billing_state'));revision=raw.revision;
   const projects=raw.projects.map(p=>({...p,client_name:raw.clients.find(c=>c.id===p.client_id)?.name||''}));
   const entries=raw.entries.map(e=>{const p=projects.find(p=>p.id===e.project_id),i=raw.invoices.find(i=>i.id===e.invoice_id);return {...e,project_name:p?.name||'',client_id:p?.client_id,client_name:p?.client_name||'',invoice_number:i?.number,invoice_status:i?.status}}).sort((a,b)=>b.work_date.localeCompare(a.work_date)||b.id-a.id);
