@@ -21,7 +21,7 @@ export async function createInvoicePDF(inv){
  for(const l of lines(addressWithCountry(issuer.address,issuer.country),230,9)){right(yy,l);yy-=12}yy-=8;
  for(const item of [issuer.website,issuer.email,issuer.phone])if(item){for(const l of lines(item,230,9)){right(yy,l);yy-=12}}yy-=8;right(yy,t.registration+': '+issuer.kvk);yy-=12;right(yy,t.vat_id+': '+issuer.vat);
  const numberLabel={nl:'Factuurnummer',en:'Invoice number',de:'Rechnungsnummer'}[lang];
- draw(43,652,isCredit?t.credit:t.title,25);draw(43,628,numberLabel+': '+inv.number+(inv.status==='draft'?' | '+t.draft:''),9,bold,gold);page.drawLine({start:{x:43,y:611},end:{x:552,y:611},thickness:.75,color:gold});draw(43,39,inv.number+(inv.status==='draft'?' | '+t.draft:''),7,font,grey);right(39,t.page+' '+pageNo,7);y=588;}
+ draw(43,652,isCredit?t.credit:t.title,25,bold);draw(43,628,numberLabel+': '+inv.number+(inv.status==='draft'?' | '+t.draft:''),9,bold,gold);page.drawLine({start:{x:43,y:611},end:{x:552,y:611},thickness:.75,color:gold});draw(43,39,inv.number+(inv.status==='draft'?' | '+t.draft:''),7,font,grey);right(39,t.page+' '+pageNo,7);y=588;}
  newPage();draw(43,y,t.bill_to,9,bold,gold);y-=18;let ly=y;
  if(s.client.name)for(const line of lines(s.client.name,250,9,bold)){draw(43,ly,line,9,bold);ly-=13}
  for(const item of [addressWithCountry(s.client.address,s.client.country),s.client.vat?t.vat_id+': '+s.client.vat:''])if(item)for(const l of lines(item,250)){draw(43,ly,l);ly-=13}
