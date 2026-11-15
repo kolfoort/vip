@@ -10,3 +10,14 @@
 
 .vies-valid{color:#237546;font-weight:700}
 .vies-invalid{color:#a13232;font-weight:700}
+
+.vies-field label{display:block}
+.vies-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:stretch;gap:8px;margin-top:6px}
+.vies-controls input{margin:0;min-width:0}
+.vies-controls .btn{justify-content:center;white-space:nowrap}
+.vies-result{margin-top:8px;font-size:12px;color:var(--muted)}
+.vies-result:empty{display:none}
+.vies-result .vies-valid,.vies-result .vies-invalid{display:inline-block;padding:4px 8px;border-radius:4px;background:#edf6f0}
+.vies-result .vies-invalid{background:#faf0ef}
+.vies-details{margin-top:5px;overflow-wrap:anywhere}
+@media(max-width:420px){.vies-controls{grid-template-columns:1fr}}
