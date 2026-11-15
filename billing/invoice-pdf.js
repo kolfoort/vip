@@ -143,7 +143,7 @@ export async function createInvoicePDF(inv){
   y-=15;
   if(y<75)newPage();
   try{
-   const response=await fetch(new URL('./invoice-thanks-'+lang+'.png?v=20261115-handwriting',import.meta.url));
+   const response=await fetch(new URL('./invoice-thanks-'+lang+'.png?v=20261115-signature-style',import.meta.url));
    if(!response.ok)throw Error('Invoice closing graphic unavailable');
    const script=await pdf.embedPng(await response.arrayBuffer());
    const height=14,width=height*script.width/script.height;
