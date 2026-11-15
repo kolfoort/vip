@@ -105,7 +105,16 @@ export async function createInvoicePDF(inv){
   de:'Bitte überweisen Sie den Rechnungsbetrag auf das unten angegebene Konto. Verwendungszweck: '+inv.number+'.'
  }[lang];
  const paymentNote=isCredit||!paymentDetails?'':t.payment+'\n'+paymentReference+'\n'+paymentDetails;
- notes.push(paymentNote,s.note,issuer.footer==='Dank voor uw vertrouwen.'?t.thanks:issuer.footer);
+ notes.push(paymentNote,s.note);
  for(const note of notes){if(!note)continue;for(const l of lines(note,507,8)){if(y<75)newPage();draw(43,y,l,8);y-=12}y-=7;}
+ const footer=issuer.footer==='Dank voor uw vertrouwen.'?t.thanks:issuer.footer;
+ if(footer){
+  const boldItalic=await pdf.embedFont(StandardFonts.HelveticaBoldOblique);
+  for(const line of lines(footer,507,8,boldItalic)){
+   if(y<75)newPage();
+   draw(43,y,line,8,boldItalic);
+   y-=12;
+  }
+ }
  const stamp=new Date(inv.reserved_at||inv.created_at);pdf.setCreationDate(stamp);pdf.setModificationDate(stamp);pdf.setTitle((isCredit?t.credit:t.title)+' '+inv.number);pdf.setAuthor(issuer.name);return pdf.save();
 }
