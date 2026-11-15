@@ -153,5 +153,5 @@ export async function createInvoicePDF(inv){
    writeNote(footer,boldItalic);
   }
  }else writeNote(footer,boldItalic);
- const stamp=new Date(inv.reserved_at||inv.created_at);pdf.setCreationDate(stamp);pdf.setModificationDate(stamp);pdf.setTitle((isCredit?t.credit:t.title)+' '+inv.number);pdf.setAuthor(issuer.name);return pdf.save();
+ const stamp=new Date(inv.reserved_at||inv.created_at);pdf.setCreationDate(stamp);pdf.setModificationDate(stamp);pdf.setTitle((isCredit?t.credit:t.title)+' '+inv.number);pdf.setAuthor(issuer.name);pdf.setCreator('VIP Capital Time & Billing');return pdf.save();
 }
